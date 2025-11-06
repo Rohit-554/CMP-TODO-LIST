@@ -34,7 +34,7 @@ fun abc() {
         contentAlignment = Alignment.Center
     ){
         Text(
-            "Hi I am Rohit",
+            "Hello blockbusters!!",
             style = MaterialTheme.typography.headlineLarge
         )
     }
