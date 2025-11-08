@@ -9,7 +9,7 @@ sealed class NavRoute {
     data object SplashScreen : NavRoute()
 
     @Serializable
-    data object DashboardScreen : NavRoute()
+    data object Onboarding : NavRoute()
 
     @Serializable
     data object HomeScreen : NavRoute()
