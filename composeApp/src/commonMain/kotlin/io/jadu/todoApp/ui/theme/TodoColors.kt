@@ -9,5 +9,7 @@ enum class TodoColors(val color: Color) {
     Light(Color(0xFFFAFAFA)),
     Cream(Color(0xFFFFFEF0)), // Cream center
     SoftCyan(Color(0xFFE8F5F0)), // Soft cyan
-    LightBlue(Color(0xFFF0F8FF))
+    LightBlue(Color(0xFFF0F8FF)),
+    LightPrimary(Color(0xffEEE9FF)),
+    GreyBackground(Color(0xFFE0E0E0))
 }

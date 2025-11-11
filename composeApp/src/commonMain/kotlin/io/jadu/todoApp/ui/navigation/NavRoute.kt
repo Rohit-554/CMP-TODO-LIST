@@ -16,4 +16,7 @@ sealed class NavRoute {
 
     @Serializable
     data object TodoList : NavRoute()
+
+    @Serializable
+    data object Home : NavRoute()
 }

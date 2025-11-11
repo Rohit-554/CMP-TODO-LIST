@@ -1,0 +1,185 @@
+package io.jadu.todoApp.ui.components
+
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import io.jadu.todoApp.ui.theme.BodyLarge
+import io.jadu.todoApp.ui.theme.BodyXLarge
+import io.jadu.todoApp.ui.theme.BodyXXLarge
+import io.jadu.todoApp.ui.theme.TodoColors
+import org.jetbrains.compose.ui.tooling.preview.Preview
+
+@Composable
+fun CurvedButton(
+    modifier: Modifier = Modifier,
+    buttonConfig : CurvedButtonConfig = CurvedButtonConfig(),
+    text: String = "",
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .wrapContentWidth()
+            .height(56.dp)
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        // Gradient Shadow
+        Canvas(
+            modifier = Modifier
+                .fillMaxSize()
+                .offset(y = 6.dp)
+                .blur(radius = 12.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
+        ) {
+            val width = size.width
+            val height = size.height
+
+            val path = createBulgedPath(
+                width = width,
+                height = height,
+                cornerRadius = buttonConfig.cornerRadius,
+                bulgeFactor = buttonConfig.verticalBulgeFactor
+            )
+
+            drawPath(
+                path = path,
+                color = buttonConfig.gradientShadowColor,
+                style = Fill
+            )
+        }
+
+        // Custom button background with bulge
+        Canvas(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            val width = size.width
+            val height = size.height
+
+            val path = createBulgedPath(
+                width = width,
+                height = height,
+                cornerRadius = buttonConfig.cornerRadius,
+                bulgeFactor = buttonConfig.verticalBulgeFactor
+            )
+
+
+            // Draw main button
+            translate(top = -2f) {
+                drawPath(
+                    path = path,
+                    color = buttonConfig.containerColor,
+                    style = Fill
+                )
+            }
+        }
+
+        // Button content
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 24.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = text,
+                style = BodyXLarge().copy(
+                    fontWeight = FontWeight.Bold,
+                    color = buttonConfig.contentColor
+                ),
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            if (buttonConfig.shouldShowArrow)  Text(
+                text = "→",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Normal,
+                color = buttonConfig.contentColor
+            )
+        }
+    }
+}
+
+fun createBulgedPath(
+    width: Float,
+    height: Float,
+    cornerRadius: Float,
+    bulgeFactor: Float
+): Path {
+    return Path().apply {
+        // Start from top-left corner
+        moveTo(cornerRadius, 0f)
+
+        // Top edge with slight bulge
+        quadraticTo(
+            width * 0.5f, -bulgeFactor, width - cornerRadius, 0f
+        )
+
+        // Top-right corner
+        quadraticTo(width, 0f, width, cornerRadius)
+
+        // Right edge with bulge
+        quadraticTo(
+            width, height * 0.5f, width, height - cornerRadius
+        )
+
+        // Bottom-right corner
+        quadraticTo(width, height, width - cornerRadius, height)
+
+        // Bottom edge with slight bulge
+        quadraticTo(
+            width * 0.5f, height + bulgeFactor, cornerRadius, height
+        )
+
+        // Bottom-left corner
+        quadraticTo(0f, height, 0f, height - cornerRadius)
+
+        // Left edge with bulge
+        quadraticTo(
+            0f, height * 0.5f, 0f, cornerRadius
+        )
+
+        // Top-left corner completion
+        quadraticTo(0f, 0f, cornerRadius, 0f)
+
+        close()
+    }
+}
+
+/**
+ * Configuration class for styling and customizing the CurvedButton appearance.
+ *
+ * @param containerColor The background color of the button
+ * @param contentColor The color of the button text and arrow icon
+ * @param gradientShadowColor The color of the shadow effect below the button
+ * @param verticalBulgeFactor The intensity of the vertical bulge effect on top and bottom edges
+ */
+data class CurvedButtonConfig (
+    val containerColor: Color = TodoColors.Primary.color,
+    val contentColor : Color = TodoColors.Light.color,
+    val gradientShadowColor : Color = TodoColors.Primary.color.copy(alpha = 0.4f),
+    val verticalBulgeFactor : Float = 8f,
+    val cornerRadius : Float = 50f,
+    val shouldShowArrow : Boolean = false
+)

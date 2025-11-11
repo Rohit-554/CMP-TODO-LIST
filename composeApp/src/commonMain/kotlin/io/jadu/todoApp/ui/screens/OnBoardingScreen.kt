@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Column
@@ -33,7 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.jadu.todoApp.ui.components.CustomButton
+import io.jadu.todoApp.ui.components.CurvedButton
 import io.jadu.todoApp.ui.theme.TodoColors
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -101,7 +100,7 @@ fun OnboardingScreen() {
                 Spacer(modifier = Modifier.height(32.dp))
 
                 // CTA Button
-                CustomButton(
+                CurvedButton(
                     onClick = {},
                     text = "Let's Start",
                     modifier = Modifier.fillMaxWidth()
