@@ -23,7 +23,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.jadu.todoApp.ui.theme.BodyLarge
@@ -43,7 +45,7 @@ fun CurvedButton(
         modifier = modifier
             .wrapContentWidth()
             .height(56.dp)
-            .clickable(onClick = onClick),
+            .bounceClickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         // Gradient Shadow
@@ -98,25 +100,27 @@ fun CurvedButton(
         // Button content
         Row(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp),
+                .fillMaxSize(),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = text,
                 style = BodyXLarge().copy(
+                    fontSize = buttonConfig.fontSize,
                     fontWeight = FontWeight.Bold,
                     color = buttonConfig.contentColor
                 ),
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            if (buttonConfig.shouldShowArrow)  Text(
-                text = "→",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Normal,
-                color = buttonConfig.contentColor
-            )
+            if (buttonConfig.shouldShowArrow)  {
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "→",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = buttonConfig.contentColor
+                )
+            }
         }
     }
 }
@@ -178,6 +182,7 @@ fun createBulgedPath(
 data class CurvedButtonConfig (
     val containerColor: Color = TodoColors.Primary.color,
     val contentColor : Color = TodoColors.Light.color,
+    val fontSize : TextUnit = 18.sp,
     val gradientShadowColor : Color = TodoColors.Primary.color.copy(alpha = 0.4f),
     val verticalBulgeFactor : Float = 8f,
     val cornerRadius : Float = 50f,

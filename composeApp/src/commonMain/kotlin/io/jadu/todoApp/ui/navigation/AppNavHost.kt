@@ -11,19 +11,22 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import io.jadu.todoApp.ui.screens.OnboardingScreen
+import io.jadu.todoApp.ui.screens.TaskScreen
+import io.jadu.todoApp.ui.screens.TestScreen
 import io.jadu.todoApp.ui.screens.homescreen.HomeScreen
 
 @Composable
-fun AppNavHost(startDestination: NavRoute = NavRoute.Home, navController: NavHostController) {
+fun AppNavHost(startDestination: NavRoute = NavRoute.TaskScreen, navController: NavHostController) {
     NavHost(
         navController = navController,
         startDestination = startDestination
     ) {
         composable<NavRoute.SplashScreen> { abc() }
         composable<NavRoute.Onboarding> { OnboardingScreen() }
-        composable<NavRoute.HomeScreen> {  }
-        composable<NavRoute.TodoList> {  }
         composable<NavRoute.Home> { HomeScreen() }
+        composable<NavRoute.TaskScreen> { TaskScreen(navController) }
+        composable<NavRoute.TodoList> {  }
+        composable<NavRoute.TestScreen> { TestScreen() }
     }
 }
 

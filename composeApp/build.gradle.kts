@@ -50,6 +50,7 @@ kotlin {
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.sqlite.bundled)
             implementation(libs.navigation.compose)
+            implementation("com.kizitonwose.calendar:compose-multiplatform:2.9.0")
 
         }
         commonTest.dependencies {

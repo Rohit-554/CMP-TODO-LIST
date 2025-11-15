@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.jadu.todoApp.ui.components.CurvedButton
+import io.jadu.todoApp.ui.theme.Spacing
 import io.jadu.todoApp.ui.theme.TodoColors
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -116,7 +117,7 @@ fun OnboardingScreen() {
 fun TodoBackgroundScreen(
     modifier : Modifier = Modifier,
     shouldShowDotsAndIcons: Boolean = false,
-    content: @Composable () -> Unit = {},
+    content: @Composable BoxWithConstraintsScope.() -> Unit = {},
 ) {
     BoxWithConstraints (
         modifier = modifier
@@ -220,10 +221,10 @@ fun BlurredCircle(color: Color, x: Dp, y: Dp, size: Dp) {
             .offset(x = x, y = y)
             .size(size)
             .blur(
-                50.dp,
+                Spacing.s15,
                 edgeTreatment = BlurredEdgeTreatment.Unbounded
             )
-            .background(color.copy(alpha = 0.5f), shape = CircleShape)
+            .background(color.copy(alpha = 0.2f), shape = CircleShape)
 
     )
 }

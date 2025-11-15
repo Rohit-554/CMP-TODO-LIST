@@ -12,11 +12,14 @@ sealed class NavRoute {
     data object Onboarding : NavRoute()
 
     @Serializable
-    data object HomeScreen : NavRoute()
-
-    @Serializable
     data object TodoList : NavRoute()
 
     @Serializable
     data object Home : NavRoute()
+
+    @Serializable
+    data object TaskScreen : NavRoute()
+
+    @Serializable
+    data object TestScreen : NavRoute()
 }
