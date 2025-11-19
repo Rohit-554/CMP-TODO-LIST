@@ -51,6 +51,9 @@ kotlin {
             implementation(libs.androidx.sqlite.bundled)
             implementation(libs.navigation.compose)
             implementation("com.kizitonwose.calendar:compose-multiplatform:2.9.0")
+            implementation("io.github.ismoy:imagepickerkmp:1.0.28-beta3")
+            implementation("io.coil-kt.coil3:coil-compose:3.3.0")
+            implementation("io.coil-kt.coil3:coil-network-ktor3:3.3.0")
 
         }
         commonTest.dependencies {

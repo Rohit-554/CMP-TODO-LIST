@@ -24,5 +24,8 @@ sealed class NavRoute {
     data object AddProject: NavRoute()
 
     @Serializable
+    data object SettingsPage : NavRoute()
+
+    @Serializable
     data object TestScreen : NavRoute()
 }
