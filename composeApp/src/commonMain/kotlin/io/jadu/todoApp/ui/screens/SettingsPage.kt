@@ -63,10 +63,12 @@ import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.GalleryPickerLauncher
+import io.jadu.todoApp.ui.animatedBottomBar.CurvedBottomNavigation
 import io.jadu.todoApp.ui.animatedBottomBar.util.toPx
 import io.jadu.todoApp.ui.components.TodoElevatedCard
 import io.jadu.todoApp.ui.components.TodoTopAppBar
 import io.jadu.todoApp.ui.components.bounceClickable
+import io.jadu.todoApp.ui.screens.homescreen.components.navItems
 import io.jadu.todoApp.ui.theme.BodyLarge
 import io.jadu.todoApp.ui.theme.BodyNormal
 import io.jadu.todoApp.ui.theme.BodySmall

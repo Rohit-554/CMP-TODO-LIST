@@ -13,17 +13,26 @@ import androidx.navigation.compose.composable
 import io.jadu.todoApp.ui.screens.AddProject
 import io.jadu.todoApp.ui.screens.OnboardingScreen
 import io.jadu.todoApp.ui.screens.SettingsPage
+import io.jadu.todoApp.ui.components.SphereTextDemo
 import io.jadu.todoApp.ui.screens.TaskScreen
 import io.jadu.todoApp.ui.screens.TestScreen
+import io.jadu.todoApp.ui.screens.TodoBackgroundScreen
 import io.jadu.todoApp.ui.screens.homescreen.HomeScreen
+import io.jadu.todoApp.ui.screens.homescreen.MostUsedCategoryScreen
 
 @Composable
-fun AppNavHost(startDestination: NavRoute = NavRoute.SettingsPage, navController: NavHostController) {
+fun AppNavHost(startDestination: NavRoute = NavRoute.SplashScreen, navController: NavHostController) {
     NavHost(
         navController = navController,
         startDestination = startDestination
     ) {
-        composable<NavRoute.SplashScreen> { abc() }
+        composable<NavRoute.SplashScreen> {
+            MostUsedCategoryScreen(
+
+            )
+
+        }
+
         composable<NavRoute.Onboarding> { OnboardingScreen() }
         composable<NavRoute.Home> { HomeScreen() }
         composable<NavRoute.TaskScreen> { TaskScreen(navController) }

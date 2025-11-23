@@ -7,8 +7,11 @@ object Spacing {
     val default: Dp = 0.dp
     val sHalf: Dp = 2.dp
     val s1: Dp = 4.dp       // 4dp
+    val s1Half: Dp = 5.dp   // 5dp
     val s2: Dp = 8.dp       // 8dp
+    val s2Half: Dp = 10.dp  // 10dp
     val s3: Dp = 12.dp      // 12dp
+    val s3Half: Dp = 14.dp  // 14dp
     val s4: Dp = 16.dp      // 16dp
     val s5: Dp = 20.dp      // 20dp
     val s6: Dp = 24.dp      // 24dp
