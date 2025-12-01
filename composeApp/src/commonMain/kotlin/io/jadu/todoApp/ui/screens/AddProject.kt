@@ -5,11 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -23,10 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import io.jadu.todoApp.data.model.TaskGroupCategory
-import io.jadu.todoApp.ui.animatedBottomBar.CurvedBottomNavigation
-import io.jadu.todoApp.ui.components.CarouselCalendar
 import io.jadu.todoApp.ui.components.CurvedButton
 import io.jadu.todoApp.ui.components.DatePickerDialog
 import io.jadu.todoApp.ui.components.EditDetailCard
@@ -34,15 +29,11 @@ import io.jadu.todoApp.ui.components.SelectGroupBottomSheet
 import io.jadu.todoApp.ui.components.SelectionCard
 import io.jadu.todoApp.ui.components.SelectionCardConfig
 import io.jadu.todoApp.ui.components.TodoTopAppBar
-import io.jadu.todoApp.ui.screens.homescreen.components.navItems
-import io.jadu.todoApp.ui.theme.BodyLarge
 import io.jadu.todoApp.ui.theme.BodyXLarge
-import io.jadu.todoApp.ui.theme.BodyXSmall
 import io.jadu.todoApp.ui.theme.Spacing
 import io.jadu.todoApp.ui.theme.TodoColors
 import io.jadu.todoApp.ui.uiutils.VSpacer
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import todo_list.composeapp.generated.resources.Res
@@ -50,7 +41,7 @@ import todo_list.composeapp.generated.resources.calendar
 
 @Composable
 @Preview
-fun AddProject(navController: NavHostController = rememberNavController()) {
+fun AddProject(navController: NavHostController) {
     var openTaskGroupSelection by remember { mutableStateOf(false) }
     var textChange by remember { mutableStateOf("") }
     var textDescription by remember { mutableStateOf("") }
@@ -173,11 +164,12 @@ fun AddProject(navController: NavHostController = rememberNavController()) {
                 }
 
                 // Take all the available Space below
-                Spacer(modifier = Modifier.weight(1f))
+                VSpacer(Spacing.s12)
 
 
                 CurvedButton (
                     modifier = Modifier,
+                    isEnabled = true,
                     text = "Add Project"
                 ) {  }
             }

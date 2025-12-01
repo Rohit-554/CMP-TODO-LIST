@@ -61,7 +61,6 @@ fun HomePageContent() {
             SectionHeader(title = "Task Group", count = taskGroups.size)
             taskGroups.forEach {
                 TaskGroupCard(it)
-                VSpacer(Spacing.s4)
             }
         }
 

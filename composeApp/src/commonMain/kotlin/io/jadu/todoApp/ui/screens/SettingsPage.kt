@@ -1,6 +1,5 @@
 package io.jadu.todoApp.ui.screens
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -21,19 +19,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.NavigateNext
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -53,42 +46,35 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.GalleryPickerLauncher
-import io.jadu.todoApp.ui.animatedBottomBar.CurvedBottomNavigation
-import io.jadu.todoApp.ui.animatedBottomBar.util.toPx
 import io.jadu.todoApp.ui.components.TodoElevatedCard
 import io.jadu.todoApp.ui.components.TodoTopAppBar
 import io.jadu.todoApp.ui.components.bounceClickable
-import io.jadu.todoApp.ui.screens.homescreen.components.navItems
 import io.jadu.todoApp.ui.theme.BodyLarge
 import io.jadu.todoApp.ui.theme.BodyNormal
 import io.jadu.todoApp.ui.theme.BodySmall
 import io.jadu.todoApp.ui.theme.BodyXLarge
 import io.jadu.todoApp.ui.theme.H2TextStyle
-import io.jadu.todoApp.ui.theme.H3TextStyle
 import io.jadu.todoApp.ui.theme.Spacing
 import io.jadu.todoApp.ui.theme.TodoColors
 import io.jadu.todoApp.ui.uiutils.VSpacer
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import todo_list.composeapp.generated.resources.Res
-import todo_list.composeapp.generated.resources.profile_2user
 import todo_list.composeapp.generated.resources.user_octagon
 
 
 @Composable
 @Preview
 fun SettingsPage(
-    navHostController: NavHostController = rememberNavController(),
+    navHostController: NavHostController,
 ) {
     var name by remember { mutableStateOf("") }
     var isEditing by remember { mutableStateOf(false) }

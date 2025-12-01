@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import io.jadu.todoApp.ui.components.SphereTextDemo
 import io.jadu.todoApp.ui.components.TodoTopAppBar
 import io.jadu.todoApp.ui.screens.ColoredDot
@@ -32,10 +31,9 @@ import todo_list.composeapp.generated.resources.pie_chart
 import kotlin.random.Random
 
 
-
 @Composable
 @Preview
-fun MostUsedCategoryScreen(navHostController : NavHostController = rememberNavController()) {
+fun MostUsedCategoryScreen(navHostController : NavHostController) {
     Scaffold(
         topBar = {
             TodoTopAppBar(

@@ -2,7 +2,6 @@ package io.jadu.todoApp.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -20,15 +18,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import io.jadu.todoApp.ui.theme.BodyLarge
 import io.jadu.todoApp.ui.theme.BodyXLarge
-import io.jadu.todoApp.ui.theme.BodyXXLarge
 import io.jadu.todoApp.ui.theme.Spacing
 import io.jadu.todoApp.ui.theme.TodoColors
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import todo_list.composeapp.generated.resources.Res
 import todo_list.composeapp.generated.resources.arrow___left
 import todo_list.composeapp.generated.resources.notification
@@ -48,7 +42,7 @@ fun TodoTopAppBar(
         Image(
             modifier = Modifier
                 .size(Spacing.s6)
-                .clickable { navController.navigateUp() },
+                .bounceClickable { navController.navigateUp() },
             painter = painterResource(Res.drawable.arrow___left),
             contentDescription = ""
         )

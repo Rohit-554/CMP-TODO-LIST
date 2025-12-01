@@ -43,7 +43,6 @@ import io.jadu.todoApp.ui.animatedBottomBar.models.NavItem
 import io.jadu.todoApp.ui.animatedBottomBar.util.RenderIcon
 import io.jadu.todoApp.ui.theme.TodoColors
 import kotlinx.coroutines.launch
-import kotlin.plus
 
 /**
  * Curved bottom navigation composable.
@@ -175,6 +174,12 @@ private fun CurvedBottomNavigationContent(
     var currentIndex by remember { mutableStateOf(selectedIndex) }
     var previousIndex by remember { mutableStateOf(selectedIndex) }
 
+    LaunchedEffect(selectedIndex) {
+        if (selectedIndex != currentIndex) {
+            previousIndex = currentIndex
+            currentIndex = selectedIndex
+        }
+    }
     val screenWidth = componentWidth
     val cellWidth = screenWidth / items.size
 

@@ -5,43 +5,36 @@ import io.jadu.todoApp.ui.animatedBottomBar.models.NavItem
 import io.jadu.todoApp.ui.navigation.NavRoute
 import todo_list.composeapp.generated.resources.Res
 import todo_list.composeapp.generated.resources.add
+import todo_list.composeapp.generated.resources.briefcase
 import todo_list.composeapp.generated.resources.calendar
-import todo_list.composeapp.generated.resources.document_text
 import todo_list.composeapp.generated.resources.home
-import todo_list.composeapp.generated.resources.profile_2user
+import todo_list.composeapp.generated.resources.user_octagon
 
 val navItems = listOf(
     NavItem(
         icon = IconSource.Drawable(Res.drawable.home),
-        selectedIcon = IconSource.Drawable(Res.drawable.home),
         label = "Home",
         route = NavRoute.Home
     ),
-
     NavItem(
-        icon = IconSource.Drawable(Res.drawable.calendar),
-        selectedIcon = null,
-        label = "Todos",
-        route = NavRoute.TodoList
+        icon = IconSource.Drawable(Res.drawable.briefcase),
+        label = "Tasks",
+        route = NavRoute.TaskScreen
     ),
-
     NavItem(
         icon = IconSource.Drawable(Res.drawable.add),
-        selectedIcon = null,
+        selectedIcon = IconSource.Drawable(Res.drawable.add),
         label = "Add",
-        route = NavRoute.TodoList
-    ),
-
-    NavItem(
-        icon = IconSource.Drawable(Res.drawable.document_text),
-        selectedIcon = null,
-        label = "Favourites",
-        route = NavRoute.TodoList
+        route = NavRoute.AddProject
     ),
     NavItem(
-        icon = IconSource.Drawable(Res.drawable.profile_2user),
-        selectedIcon = null,
-        label = "Profile",
-        route = NavRoute.TodoList
+        icon = IconSource.Drawable(Res.drawable.calendar),
+        label = "Calendar",
+        route = NavRoute.SplashScreen
+    ),
+    NavItem(
+        icon = IconSource.Drawable(Res.drawable.user_octagon),
+        label = "Settings",
+        route = NavRoute.SettingsPage
     )
 )

@@ -12,13 +12,14 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 
 fun Modifier.bounceClickable(
+    enabled: Boolean = true,
     pressedScale: Number = 0.9f,
     onClick: (() -> Unit)? = null,
 ) = composed {
     var isPressed by remember { mutableStateOf(false) }
     val floatScale = pressedScale.toFloat()
     val scale by animateFloatAsState(
-        targetValue = if (isPressed) floatScale else 1f,
+        targetValue = if (isPressed && enabled) floatScale else 1f,
         label = ""
     )
 
@@ -27,7 +28,8 @@ fun Modifier.bounceClickable(
             scaleX = scale
             scaleY = scale
         }
-        .pointerInput(Unit) {
+        .pointerInput(enabled) {
+            if(enabled)
             detectTapGestures(
                 onPress = {
                     isPressed = true

@@ -1,16 +1,13 @@
 package io.jadu.todoApp.ui.components
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Text
@@ -23,53 +20,54 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.translate
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.jadu.todoApp.ui.theme.BodyLarge
 import io.jadu.todoApp.ui.theme.BodyXLarge
-import io.jadu.todoApp.ui.theme.BodyXXLarge
 import io.jadu.todoApp.ui.theme.TodoColors
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun CurvedButton(
     modifier: Modifier = Modifier,
     buttonConfig : CurvedButtonConfig = CurvedButtonConfig(),
     text: String = "",
+    isEnabled: Boolean = true,
     onClick: () -> Unit,
 ) {
     Box(
         modifier = modifier
             .wrapContentWidth()
             .height(56.dp)
-            .bounceClickable(onClick = onClick),
+            .bounceClickable(
+                onClick = onClick,
+                enabled = isEnabled
+            ),
         contentAlignment = Alignment.Center
     ) {
-        // Gradient Shadow
-        Canvas(
-            modifier = Modifier
-                .fillMaxSize()
-                .offset(y = 6.dp)
-                .blur(radius = 12.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
-        ) {
-            val width = size.width
-            val height = size.height
+        if (isEnabled) {
+            Canvas(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .offset(y = 6.dp)
+                    .blur(radius = 12.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
+            ) {
+                val width = size.width
+                val height = size.height
 
-            val path = createBulgedPath(
-                width = width,
-                height = height,
-                cornerRadius = buttonConfig.cornerRadius,
-                bulgeFactor = buttonConfig.verticalBulgeFactor
-            )
+                val path = createBulgedPath(
+                    width = width,
+                    height = height,
+                    cornerRadius = buttonConfig.cornerRadius,
+                    bulgeFactor = buttonConfig.verticalBulgeFactor
+                )
 
-            drawPath(
-                path = path,
-                color = buttonConfig.gradientShadowColor,
-                style = Fill
-            )
+                drawPath(
+                    path = path,
+                    color = buttonConfig.gradientShadowColor,
+                    style = Fill
+                )
+            }
         }
 
         // Custom button background with bulge
@@ -91,7 +89,8 @@ fun CurvedButton(
             translate(top = -2f) {
                 drawPath(
                     path = path,
-                    color = buttonConfig.containerColor,
+                    color = if(isEnabled) buttonConfig.containerColor
+                    else TodoColors.BorderGrey.color.copy(alpha = 0.5f),
                     style = Fill
                 )
             }
@@ -109,7 +108,8 @@ fun CurvedButton(
                 style = BodyXLarge().copy(
                     fontSize = buttonConfig.fontSize,
                     fontWeight = FontWeight.Bold,
-                    color = buttonConfig.contentColor
+                    color = if (isEnabled) buttonConfig.contentColor
+                    else TodoColors.Dark.color
                 ),
             )
             if (buttonConfig.shouldShowArrow)  {
