@@ -1,4 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -33,6 +32,7 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
            // implementation(libs.androidx.room.sqlite.wrapper)
+            implementation("io.insert-koin:koin-android:3.2.0")
         }
 
         commonMain.dependencies {
@@ -59,6 +59,10 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+    }
+
+    sourceSets.all {
+        languageSettings.optIn("kotlin.time.ExperimentalTime")
     }
 }
 
