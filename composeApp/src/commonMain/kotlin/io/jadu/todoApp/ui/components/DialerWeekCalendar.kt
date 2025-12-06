@@ -5,12 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -25,7 +23,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
@@ -47,7 +44,10 @@ import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalTime::class)
 @Composable
-fun CarouselCalendar() {
+fun CarouselCalendar(
+    initialSelectedDate: LocalDate? = null,
+    onDateSelected: (LocalDate) -> Unit = {}
+) {
     //// Clock.System.now() -> Output: 2025-11-15T14:30:45.123456789Z
     ////                        (Year-Month-Day T Hour:Minute:Second.Nanoseconds Z for UTC)
 
@@ -72,7 +72,7 @@ fun CarouselCalendar() {
     }
 
     // Selected item is today's date (even though list starts at Jan 1)
-    var selectedDate by remember { mutableStateOf(today) }
+    var selectedDate by remember { mutableStateOf(initialSelectedDate ?: today) }
 
     BoxWithConstraints(
         modifier = Modifier.fillMaxWidth()
@@ -80,7 +80,10 @@ fun CarouselCalendar() {
         DialerWeekCalendar(
             dates = dates,
             selectedDate = selectedDate,
-            onDateSelected = { selectedDate = it },
+            onDateSelected = {
+                selectedDate = it
+                onDateSelected(it)
+            },
             maxWidth = maxWidth
         )
     }

@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,12 +18,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import io.jadu.todoApp.ui.components.SphereTextDemo
 import io.jadu.todoApp.ui.components.TodoTopAppBar
-import io.jadu.todoApp.ui.screens.ColoredDot
-import io.jadu.todoApp.ui.screens.TodoBackgroundScreen
+import io.jadu.todoApp.ui.screens.onBoarding.ColoredDot
+import io.jadu.todoApp.ui.screens.onBoarding.TodoBackgroundScreen
 import io.jadu.todoApp.ui.theme.Spacing
 import io.jadu.todoApp.ui.theme.TodoColors
+import io.jadu.todoApp.ui.viewModel.MostUsedCategoryViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.koinInject
 import todo_list.composeapp.generated.resources.Res
 import todo_list.composeapp.generated.resources.blue_desk_calendar
 import todo_list.composeapp.generated.resources.blue_stopwatch_with_pink_arrow
@@ -33,7 +37,12 @@ import kotlin.random.Random
 
 @Composable
 @Preview
-fun MostUsedCategoryScreen(navHostController : NavHostController) {
+fun MostUsedCategoryScreen(
+    navHostController: NavHostController,
+    viewModel: MostUsedCategoryViewModel = koinInject()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
     Scaffold(
         topBar = {
             TodoTopAppBar(
@@ -131,7 +140,9 @@ fun MostUsedCategoryScreen(navHostController : NavHostController) {
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.TopCenter
             ) {
-                SphereTextDemo()
+                SphereTextDemo(
+                    labels = uiState.labels
+                )
             }
 
         }

@@ -12,9 +12,3 @@ data class ScheduleTaskModel(
     val category: TaskGroupCategory = TaskGroupCategory.DailyStudy,
     val status: TaskStatus = TaskStatus.IN_PROGRESS
 )
-
-enum class TaskStatus {
-    IN_PROGRESS,
-    TO_DO,
-    DONE
-}

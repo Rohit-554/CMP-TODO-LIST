@@ -1,6 +1,5 @@
 package io.jadu.todoApp.ui.components
 
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,9 +12,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -25,16 +22,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
@@ -53,8 +46,6 @@ import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.kizitonwose.calendar.core.minusMonths
 import com.kizitonwose.calendar.core.now
 import com.kizitonwose.calendar.core.plusMonths
-import io.jadu.todoApp.ui.theme.BodyLarge
-import io.jadu.todoApp.ui.theme.BodyNormal
 import io.jadu.todoApp.ui.theme.BodySmall
 import io.jadu.todoApp.ui.theme.BodyXLarge
 import io.jadu.todoApp.ui.theme.H3TextStyle
@@ -66,7 +57,6 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.YearMonth
-import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.Clock
@@ -75,14 +65,16 @@ import kotlin.time.ExperimentalTime
 @OptIn(ExperimentalTime::class)
 @Composable
 @Preview
-fun MonthCalendar() {
+fun MonthCalendar(
+    selectedDate: LocalDate? = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
+    onDateSelected: (LocalDate) -> Unit = {}
+) {
     val currentMonth = remember { YearMonth.now() }
     val startMonth = remember { currentMonth.minusMonths(100) } // Adjust as needed
     val endMonth = remember { currentMonth.plusMonths(100) } // Adjust as needed
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() } // Available from the library
     val coroutineScope = rememberCoroutineScope()
     val daysOfWeek = remember { daysOfWeek() }
-    val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
     val state =
         rememberCalendarState(
             startMonth = startMonth,
@@ -90,7 +82,6 @@ fun MonthCalendar() {
             firstVisibleMonth = currentMonth,
             firstDayOfWeek = firstDayOfWeek
         )
-    var selectedDate by remember { mutableStateOf<LocalDate?>(today) }
 
     Column(
         modifier = Modifier.padding(16.dp)
@@ -129,8 +120,8 @@ fun MonthCalendar() {
                         Day(
                             day,
                             isSelected = selectedDate == day.date,
-                        ) { day ->
-                            selectedDate = day.date
+                        ) { clickedDay ->
+                            onDateSelected(clickedDay.date)
                         }
                     }
                 )

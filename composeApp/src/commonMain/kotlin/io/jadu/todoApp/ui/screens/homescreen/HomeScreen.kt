@@ -2,14 +2,15 @@ package io.jadu.todoApp.ui.screens.homescreen
 
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import io.jadu.todoApp.ui.screens.TodoBackgroundScreen
+import androidx.navigation.NavController
 import io.jadu.todoApp.ui.screens.homescreen.components.HomePageContent
+import io.jadu.todoApp.ui.screens.onBoarding.TodoBackgroundScreen
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
     Scaffold {
         TodoBackgroundScreen {
-            HomePageContent()
+            HomePageContent(navController)
         }
     }
 }

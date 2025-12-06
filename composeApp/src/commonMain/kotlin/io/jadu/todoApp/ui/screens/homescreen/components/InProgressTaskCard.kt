@@ -32,7 +32,7 @@ fun InProgressTaskCard(
     task: InProgressTask = InProgressTask(
         id = "1",
         title = "Working on Jetpack Compose",
-        category = TaskCategory.Office,
+        category = TaskCategory.Personal,
         progressPercentage = 0.5f,
     )
 ) {

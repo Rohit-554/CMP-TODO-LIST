@@ -22,6 +22,7 @@ import androidx.navigation.NavController
 import io.jadu.todoApp.ui.theme.BodyXLarge
 import io.jadu.todoApp.ui.theme.Spacing
 import io.jadu.todoApp.ui.theme.TodoColors
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import todo_list.composeapp.generated.resources.Res
 import todo_list.composeapp.generated.resources.arrow___left
@@ -31,9 +32,11 @@ import todo_list.composeapp.generated.resources.notification
 fun TodoTopAppBar(
     modifier: Modifier = Modifier,
     title: String = "Today's Tasks",
-    navController: NavController
+    navController: NavController,
+    actionImage : DrawableResource = Res.drawable.notification,
+    onActionClick : (() -> Unit)? = null
 ) {
-    val shouldShowNotificationDot = remember { mutableStateOf(true) }
+    val shouldShowNotificationDot = remember { mutableStateOf(false) }
     Row(
         modifier = modifier.fillMaxWidth().height(Spacing.s14).padding(horizontal = Spacing.s4),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -53,10 +56,14 @@ fun TodoTopAppBar(
             )
         )
         Box(
-            modifier = Modifier.size(Spacing.s6)
+            modifier = Modifier
+                .size(Spacing.s6)
+                .bounceClickable {
+                    onActionClick?.invoke()
+                }
         ) {
             Image(
-                painter = painterResource(Res.drawable.notification),
+                painter = painterResource(actionImage),
                 contentDescription = null
             )
 

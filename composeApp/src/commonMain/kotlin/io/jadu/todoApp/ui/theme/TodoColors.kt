@@ -19,6 +19,7 @@ enum class TodoColors(val color: Color) {
     BorderGrey(Color(0xFFD0D7DE)),
     SkyBlue(Color(0xFF6CB4EE)),
     Pink(Color(0xFFFF6B9D)),
+    Error(Color(0xFFDC362E)),
     Blue(Color(0xFF4A90E2)),
     Emerald(Color(0xFF50C878)),
     Orange(Color(0xFFFFA500)),

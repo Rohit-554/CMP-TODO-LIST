@@ -24,10 +24,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.navigation.NavHostController
+import io.jadu.todoApp.data.model.TaskStatus
 import io.jadu.todoApp.ui.components.CurvedButton
+import io.jadu.todoApp.ui.components.CustomDialog
+import io.jadu.todoApp.ui.components.CustomDialogConfig
 import io.jadu.todoApp.ui.components.DatePickerDialog
 import io.jadu.todoApp.ui.components.EditDetailCard
 import io.jadu.todoApp.ui.components.SelectGroupBottomSheet
+import io.jadu.todoApp.ui.components.SelectTaskStatusBottomSheet
 import io.jadu.todoApp.ui.components.SelectionCard
 import io.jadu.todoApp.ui.components.SelectionCardConfig
 import io.jadu.todoApp.ui.components.TodoTopAppBar
@@ -36,57 +40,65 @@ import io.jadu.todoApp.ui.theme.BodyXLarge
 import io.jadu.todoApp.ui.theme.Spacing
 import io.jadu.todoApp.ui.theme.TodoColors
 import io.jadu.todoApp.ui.uiutils.VSpacer
-import io.jadu.todoApp.ui.viewModel.AddProjectViewModel
+import io.jadu.todoApp.ui.viewModel.EditTodoViewModel
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 import todo_list.composeapp.generated.resources.Res
 import todo_list.composeapp.generated.resources.calendar
+import todo_list.composeapp.generated.resources.delete_rounded_icon
 
 @Composable
 @Preview
-fun AddProject(
+fun EditTodoScreen(
     navController: NavHostController,
-    viewModel: AddProjectViewModel = koinInject()
+    todoId: Long,
+    viewModel: EditTodoViewModel = koinInject()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var openTaskGroupSelection by remember { mutableStateOf(false) }
+    var openTaskStatusSelection by remember { mutableStateOf(false) }
     var openStartDatePicker by remember { mutableStateOf(false) }
     var openEndDatePicker by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    var shouldDeleteTodo by remember { mutableStateOf(false) }
 
-    // Navigate back when saved successfully
-    LaunchedEffect(uiState.isSaved) {
-        if (uiState.isSaved) {
+    LaunchedEffect(todoId) {
+        viewModel.loadTodo(todoId)
+    }
+
+    // Navigate back when saved or deleted successfully
+    LaunchedEffect(uiState.isSaved, uiState.isDeleted) {
+        if (uiState.isSaved || uiState.isDeleted) {
             viewModel.resetState()
             navController.navigateUp()
         }
     }
 
     TodoBackgroundScreen {
-
-        // Don't give here, padding as topAppBar already have
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Top Appbar
             TodoTopAppBar(
-                title = "Add Project",
+                title = "Edit Task",
                 modifier = Modifier.systemBarsPadding(),
-                navController = navController
+                navController = navController,
+                actionImage = Res.drawable.delete_rounded_icon,
+                onActionClick = {
+                    shouldDeleteTodo = true
+                }
             )
 
-            // This column is used to give padding to components included
             Column(
                 modifier = Modifier.fillMaxWidth().padding(Spacing.s4),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                // Add TaskGroup
+                // Task Group
                 SelectionCard(
                     cardConfig = SelectionCardConfig(
                         title = "Task Group",
@@ -114,24 +126,64 @@ fun AddProject(
                     scope.launch {
                         openTaskGroupSelection = !openTaskGroupSelection
                     }
-
                 }
 
-                // Add Project Name
+                // Task Status
+                SelectionCard(
+                    cardConfig = SelectionCardConfig(
+                        title = "Task Status",
+                        subtitle = when (uiState.selectedStatus) {
+                           TaskStatus.TO_DO -> "To Do"
+                            TaskStatus.IN_PROGRESS -> "In Progress"
+                            TaskStatus.DONE -> "Done"
+                        },
+                        leadingIcon = {
+                            val statusColor = when (uiState.selectedStatus) {
+                                TaskStatus.TO_DO -> TodoColors.Primary.color
+                                TaskStatus.IN_PROGRESS -> TodoColors.Orange.color
+                                TaskStatus.DONE -> TodoColors.Emerald.color
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .size(Spacing.s8)
+                                    .background(
+                                        color = statusColor.copy(alpha = 0.15f),
+                                        shape = CircleShape
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(Spacing.s4)
+                                        .background(
+                                            color = statusColor,
+                                            shape = CircleShape
+                                        )
+                                )
+                            }
+                        }
+                    )
+                ) {
+                    scope.launch {
+                        openTaskStatusSelection = !openTaskStatusSelection
+                    }
+                }
+
+                // Task Name
                 EditDetailCard(
                     value = uiState.title,
-                    placeHolderText = "Uber Designing",
+                    placeHolderText = "Task Name",
                     textStyle = BodyXLarge(),
                     onTextChange = {
                         viewModel.updateTitle(it)
                     }
                 )
 
-                // Add description
+                // Description
                 EditDetailCard(
                     value = uiState.description,
                     title = "Description",
-                    placeHolderText = "Add Project description here",
+                    placeHolderText = "Add task description here",
                     onTextChange = { alphabet ->
                         viewModel.updateDescription(alphabet)
                     }
@@ -179,7 +231,6 @@ fun AddProject(
                     }
                 }
 
-                // Take all the available Space below
                 VSpacer(Spacing.s12)
 
                 // Show error message if any
@@ -191,12 +242,13 @@ fun AddProject(
                     )
                 }
 
+                // Action buttons
                 CurvedButton(
                     modifier = Modifier,
                     isEnabled = !uiState.isLoading,
-                    text = if (uiState.isLoading) "Saving..." else "Add Project"
+                    text = if (uiState.isLoading) "Saving..." else "Save Changes"
                 ) {
-                    viewModel.saveProject()
+                    viewModel.saveTodo()
                 }
             }
         }
@@ -209,6 +261,18 @@ fun AddProject(
                 onCategorySelected = { category ->
                     viewModel.updateGroupCategory(category)
                     openTaskGroupSelection = false
+                }
+            )
+
+        if (openTaskStatusSelection)
+            SelectTaskStatusBottomSheet(
+                selectedStatus = uiState.selectedStatus,
+                onDismiss = {
+                    openTaskStatusSelection = false
+                },
+                onStatusSelected = { status ->
+                    viewModel.updateStatus(status)
+                    openTaskStatusSelection = false
                 }
             )
 
@@ -231,5 +295,33 @@ fun AddProject(
                     openEndDatePicker = false
                 }
             )
+
+        DeletePermissionDialog(
+            isOpen = shouldDeleteTodo,
+            onDismiss = {
+                shouldDeleteTodo = false
+            },
+            onConfirm = {
+                viewModel.deleteTodo()
+            }
+        )
     }
+}
+
+@Composable
+fun DeletePermissionDialog(
+    isOpen: Boolean = false,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    val config = CustomDialogConfig(
+        title = "Delete Todo",
+        subtitle = "Are you sure, to delete this Todo?"
+    )
+    if (isOpen)
+        CustomDialog(
+            config = config,
+            onDismiss = onDismiss,
+            onConfirm = onConfirm
+        )
 }

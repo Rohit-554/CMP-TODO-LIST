@@ -28,7 +28,12 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview(showBackground = true)
-fun TaskProgressCard() {
+fun TaskProgressCard(
+    progress: Float = 0.7f,
+    onViewTaskClick: () -> Unit = {}
+) {
+    val progressPercentage = (progress * 100).toInt()
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -55,7 +60,7 @@ fun TaskProgressCard() {
                 VSpacer(Spacing.s6)
                 CurvedButton(
                     modifier = Modifier,
-                    onClick = {},
+                    onClick = onViewTaskClick,
                     text = "View Task",
                     buttonConfig = CurvedButtonConfig(
                         cornerRadius = 40f,
@@ -74,14 +79,14 @@ fun TaskProgressCard() {
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator(
-                    progress = { 0.7f },
+                    progress = { progress },
                     modifier = Modifier.size(Spacing.s25),
                     strokeWidth = Spacing.s2,
                     color = Color.White,
                     trackColor = Color.White.copy(alpha = 0.2f)
                 )
                 Text(
-                    text = "70%",
+                    text = "$progressPercentage%",
                     style = BodyXLarge().copy(
                         fontWeight = FontWeight.Bold,
                         color = TodoColors.Light.color

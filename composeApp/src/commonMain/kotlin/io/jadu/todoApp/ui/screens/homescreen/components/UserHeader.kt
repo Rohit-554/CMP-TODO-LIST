@@ -6,11 +6,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +17,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import coil3.compose.AsyncImage
+import io.jadu.todoApp.data.model.UserProfile
 import io.jadu.todoApp.ui.theme.BodyLarge
 import io.jadu.todoApp.ui.theme.BodySmall
 import io.jadu.todoApp.ui.theme.BodyXXLarge
@@ -29,10 +31,13 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import todo_list.composeapp.generated.resources.Res
 import todo_list.composeapp.generated.resources.notification
+import todo_list.composeapp.generated.resources.user_octagon
 
 @Composable
 @Preview(showBackground = true)
-fun UserHeader() {
+fun UserHeader(
+    userProfile: UserProfile = UserProfile()
+) {
 
     val shouldShowNotificationDot = remember { mutableStateOf(true) }
     Row(
@@ -48,18 +53,36 @@ fun UserHeader() {
             Box(
                 modifier = Modifier
                     .size(Spacing.s14)
-                    .clip(CircleShape)
-                    .background(
-                        TodoColors.Primary.color
-                    ),
+                    .clip(CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    "J",
-                    style = BodyXXLarge().copy(
-                        color = TodoColors.Light.color
+                if (userProfile.photoData != null) {
+                    AsyncImage(
+                        model = userProfile.photoData,
+                        contentDescription = "Profile Picture",
+                        modifier = Modifier
+                            .size(Spacing.s14)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop
                     )
-                )
+                } else if (userProfile.name.isNotEmpty()) {
+                    Text(
+                        userProfile.name.first().uppercase(),
+                        style = BodyXXLarge().copy(
+                            color = TodoColors.Light.color
+                        )
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(Res.drawable.user_octagon),
+                        contentDescription = "Default Profile Picture",
+                        colorFilter = ColorFilter.tint(
+                            color = TodoColors.Primary.color
+                        ),
+                        modifier = Modifier
+                            .size(Spacing.s14),
+                    )
+                }
             }
 
             HSpacer()
@@ -72,7 +95,8 @@ fun UserHeader() {
                     style = BodySmall()
                 )
                 Text(
-                    text = "Blockbusters"
+                    text = if (userProfile.name.isNotEmpty()) userProfile.name else "User",
+                    style = BodyLarge()
                 )
             }
 

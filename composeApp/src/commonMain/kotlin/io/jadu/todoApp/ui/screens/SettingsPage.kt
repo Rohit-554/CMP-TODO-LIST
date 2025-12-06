@@ -25,14 +25,17 @@ import androidx.compose.material.icons.automirrored.filled.NavigateNext
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,21 +55,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
+import io.github.ismoy.imagepickerkmp.domain.extensions.loadBytes
 import io.github.ismoy.imagepickerkmp.domain.models.GalleryPhotoResult
 import io.github.ismoy.imagepickerkmp.presentation.ui.components.GalleryPickerLauncher
 import io.jadu.todoApp.ui.components.TodoElevatedCard
+import io.jadu.todoApp.ui.components.TodoTextField
 import io.jadu.todoApp.ui.components.TodoTopAppBar
 import io.jadu.todoApp.ui.components.bounceClickable
+import io.jadu.todoApp.ui.navigation.NavRoute
+import io.jadu.todoApp.ui.screens.onBoarding.TodoBackgroundScreen
 import io.jadu.todoApp.ui.theme.BodyLarge
 import io.jadu.todoApp.ui.theme.BodyNormal
 import io.jadu.todoApp.ui.theme.BodySmall
 import io.jadu.todoApp.ui.theme.BodyXLarge
+import io.jadu.todoApp.ui.theme.H1TextStyle
 import io.jadu.todoApp.ui.theme.H2TextStyle
 import io.jadu.todoApp.ui.theme.Spacing
 import io.jadu.todoApp.ui.theme.TodoColors
 import io.jadu.todoApp.ui.uiutils.VSpacer
+import io.jadu.todoApp.ui.viewModel.SettingsViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.koinInject
 import todo_list.composeapp.generated.resources.Res
 import todo_list.composeapp.generated.resources.user_octagon
 
@@ -75,7 +85,10 @@ import todo_list.composeapp.generated.resources.user_octagon
 @Preview
 fun SettingsPage(
     navHostController: NavHostController,
+    viewModel: SettingsViewModel = koinInject()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     var name by remember { mutableStateOf("") }
     var isEditing by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
@@ -86,11 +99,22 @@ fun SettingsPage(
     var showGallery by remember { mutableStateOf(false) }
     var selectedPhoto by remember { mutableStateOf<GalleryPhotoResult?>(null) }
 
+    // Sync name from database
+    LaunchedEffect(uiState.userProfile.name) {
+        if (name.isEmpty() && uiState.userProfile.name.isNotEmpty()) {
+            name = uiState.userProfile.name
+        }
+    }
+
     // Gallery picker
     if (showGallery) {
         GalleryPickerLauncher(
             onPhotosSelected = { photos ->
                 selectedPhoto = photos.firstOrNull()
+                selectedPhoto?.let {
+                    // GalleryPhotoResult contains the image bytes in 'bytes' property
+                    viewModel.updateUserPhoto(it.loadBytes())
+                }
                 showGallery = false
             },
             onError = { showGallery = false },
@@ -161,6 +185,7 @@ fun SettingsPage(
                                                 // show a message to user
                                                 return@bounceClickable
                                             }
+                                            viewModel.updateUserName(name)
                                         }
                                         isEditing = !isEditing
                                     }
@@ -180,16 +205,18 @@ fun SettingsPage(
                                     },
                                 contentAlignment = Alignment.Center
                             ) {
-                                selectedPhoto?.let { photo ->
+                                val photoToDisplay = selectedPhoto?.loadBytes() ?: uiState.userProfile.photoData
+
+                                if (photoToDisplay != null) {
                                     AsyncImage(
-                                        model = photo.uri,
+                                        model = photoToDisplay,
                                         contentDescription = "Profile Picture",
                                         modifier = Modifier
                                             .size(100.dp)
                                             .clip(CircleShape),
                                         contentScale = ContentScale.Crop
                                     )
-                                } ?: run {
+                                } else {
                                     Image(
                                         painter = painterResource(Res.drawable.user_octagon),
                                         contentDescription = "Profile Picture",
@@ -243,11 +270,11 @@ fun SettingsPage(
                                             placeholder = {
                                                 Text(
                                                     text = "Add Your Name",
-                                                    style = MaterialTheme.typography.bodyLarge,
-                                                    fontSize = 36.sp,
-                                                    fontWeight = FontWeight.Normal,
-                                                    fontStyle = FontStyle.Italic,
-                                                    color = Color.Gray,
+                                                    style = H1TextStyle().copy(
+                                                        fontSize = 36.sp,
+                                                        fontStyle = FontStyle.Italic,
+                                                        color = Color.Gray
+                                                    ),
                                                 )
                                             }
                                         )
@@ -269,10 +296,11 @@ fun SettingsPage(
                                         } else {
                                             Text(
                                                 text = name,
-                                                style = MaterialTheme.typography.bodyLarge,
-                                                fontSize = 36.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                color = MaterialTheme.colorScheme.onSurface,
+                                                style = H1TextStyle().copy(
+                                                    fontSize = 36.sp,
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = Color.Gray
+                                                ),
                                             )
                                         }
                                         Spacer(modifier = Modifier.width(Spacing.s3))
@@ -318,8 +346,8 @@ fun SettingsPage(
                                             contentAlignment = Alignment.Center
                                         ) {
                                             InfoCard(
-                                                title = "0",
-                                                subtitle = "Notes",
+                                                title = "${uiState.completedTodos}",
+                                                subtitle = "Completed",
                                                 modifier = Modifier
                                             )
                                         }
@@ -344,8 +372,8 @@ fun SettingsPage(
                                             contentAlignment = Alignment.Center
                                         ) {
                                             InfoCard(
-                                                title = "0",
-                                                subtitle = "TO-DOs",
+                                                title = "${uiState.incompleteTodos}",
+                                                subtitle = "Remaining",
                                                 modifier = Modifier
                                             )
                                         }
@@ -358,15 +386,13 @@ fun SettingsPage(
 
                             // Action Buttons
                             BorderButton(
-                                navHostController,
                                 "About Us",
                                 onClick = {
-                                    // navHostController.navigate(NavigationItem.AboutPage.route)
+                                    navHostController.navigate(NavRoute.AboutUs)
                                 },
                                 subtitle = "Know more about us"
                             )
                             BorderButton(
-                                navHostController,
                                 "FeedBack",
                                 onClick = {
                                     showDialog = true
@@ -375,7 +401,6 @@ fun SettingsPage(
                                 subtitle = "Give us your valuable feedback"
                             )
                             BorderButton(
-                                navHostController,
                                 "Report A Bug",
                                 onClick = {
                                     showDialog = true
@@ -406,13 +431,13 @@ fun SettingsPage(
 
 @Composable
 private fun BorderButton(
-    navHostController: NavHostController,
     title: String,
     onClick: () -> Unit,
     subtitle: String
 ) {
     TodoElevatedCard(
-        modifier = Modifier.padding(horizontal = Spacing.s4)
+        modifier = Modifier.padding(horizontal = Spacing.s4),
+        onClick = onClick
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -475,36 +500,46 @@ private fun TextFieldDialogue(
     onSubmit: (String) -> Unit,
     isFeedbackClicked: Boolean
 ) {
-    // Simple placeholder - can be expanded later
-    androidx.compose.material3.AlertDialog(
+    var text by remember { mutableStateOf("") }
+
+    AlertDialog(
+        containerColor = TodoColors.Light.color,
         onDismissRequest = onDismissRequest,
         title = {
-            Text(if (isFeedbackClicked) "Feedback" else "Report a Bug")
+            Text(
+                if (isFeedbackClicked) "Feedback" else "Report a Bug",
+                style = BodyLarge()
+            )
         },
         text = {
-            var text by remember { mutableStateOf("") }
-            TextField(
+            TodoTextField(
                 value = text,
                 onValueChange = { text = it },
-                placeholder = {
-                    Text(if (isFeedbackClicked) "Share your feedback..." else "Describe the bug...")
-                },
-                modifier = Modifier.fillMaxWidth()
+                placeholder = if (isFeedbackClicked) "Share your feedback..." else "Describe the bug...",
+                modifier = Modifier.fillMaxWidth(),
+                focusedBorderColor = MaterialTheme.colorScheme.outline,
+                singleLine = false
             )
         },
         confirmButton = {
-            androidx.compose.material3.TextButton(
+            TextButton(
                 onClick = {
-                    onSubmit("")
+                    onSubmit(text)
                     onDismissRequest()
                 }
             ) {
-                Text("Submit")
+                Text(
+                    "Submit",
+                    style = BodyNormal()
+                )
             }
         },
         dismissButton = {
-            androidx.compose.material3.TextButton(onClick = onDismissRequest) {
-                Text("Cancel")
+            TextButton(onClick = onDismissRequest) {
+                Text(
+                    "Cancel",
+                    style = BodyNormal()
+                )
             }
         }
     )

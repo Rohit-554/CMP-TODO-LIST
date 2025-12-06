@@ -10,7 +10,7 @@ fun getDatabaseBuilder(): RoomDatabase.Builder<AppDatabase> {
     val dbFilePath = documentDirectory() + "/my_room.db"
     return Room.databaseBuilder<AppDatabase>(
         name = dbFilePath,
-    )
+    ).fallbackToDestructiveMigration(true)
 }
 
 @OptIn(ExperimentalForeignApi::class)
