@@ -14,13 +14,6 @@ class OnBoardingViewModel(
 
     private val isNewUserKey = booleanPreferencesKey("is_new_user")
 
-/*    val currentRoute = mutableStateOf<NavRoute>(NavRoute.Home)
-    init {
-        viewModelScope.launch {
-            currentRoute.value = getCurrentRoute()
-        }
-    }*/
-
     suspend fun getCurrentRoute(): NavRoute {
         val isNewUser = prefs.data.first()[isNewUserKey] ?: true
         return if (isNewUser) NavRoute.Onboarding else NavRoute.Home

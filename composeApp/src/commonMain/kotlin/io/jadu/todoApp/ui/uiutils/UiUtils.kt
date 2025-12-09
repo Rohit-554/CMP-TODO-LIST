@@ -41,3 +41,7 @@ fun Month.shortName(): String {
         take(3)
     }
 }
+
+expect val screenDensity: Float
+expect val screenWidth: Dp
+expect val screenHeight: Dp

@@ -3,6 +3,7 @@ package io.jadu.todoApp.ui.screens
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface  //import material 3 not material
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -10,6 +11,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,6 +24,7 @@ import io.jadu.todoApp.ui.animatedBottomBar.models.NavItem
 import io.jadu.todoApp.ui.navigation.NavRoute
 import io.jadu.todoApp.ui.screens.homescreen.HomeScreen
 import io.jadu.todoApp.ui.screens.homescreen.MostUsedCategoryScreen
+import io.jadu.todoApp.ui.screens.homescreen.components.CustomSnackbarHost
 import io.jadu.todoApp.ui.theme.TodoColors
 import todo_list.composeapp.generated.resources.Res
 import todo_list.composeapp.generated.resources.add
@@ -82,6 +86,13 @@ fun MainNavigation(
         modifier = Modifier.navigationBarsPadding(),
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
+            CustomSnackbarHost(
+                modifier =
+                    Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(top = 48.dp)
+                        .zIndex(99999f)
+            )
             NavHost(
                 navController = navController,
                 startDestination = NavRoute.Home,

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,6 +34,7 @@ import io.jadu.todoApp.ui.components.SelectTaskStatusBottomSheet
 import io.jadu.todoApp.ui.components.SelectionCard
 import io.jadu.todoApp.ui.components.SelectionCardConfig
 import io.jadu.todoApp.ui.components.TodoTopAppBar
+import io.jadu.todoApp.ui.screens.homescreen.components.showSnackBar
 import io.jadu.todoApp.ui.screens.onBoarding.TodoBackgroundScreen
 import io.jadu.todoApp.ui.theme.BodyXLarge
 import io.jadu.todoApp.ui.theme.Spacing
@@ -235,10 +235,8 @@ fun EditTodoScreen(
 
                 // Show error message if any
                 if (uiState.errorMessage != null) {
-                    Text(
-                        text = uiState.errorMessage!!,
-                        color = TodoColors.Error.color,
-                        modifier = Modifier.padding(bottom = Spacing.s2)
+                    showSnackBar(
+                        message = uiState.errorMessage.orEmpty()
                     )
                 }
 

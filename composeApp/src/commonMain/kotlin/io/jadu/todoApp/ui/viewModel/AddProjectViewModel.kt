@@ -8,8 +8,10 @@ import io.jadu.todoApp.data.model.TaskGroupCategory
 import io.jadu.todoApp.data.model.TaskPriority
 import io.jadu.todoApp.data.model.TaskStatus
 import io.jadu.todoApp.data.model.TodoItem
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -28,12 +30,21 @@ data class AddProjectUiState(
     val isSaved: Boolean = false
 )
 
+sealed class UiEvent {
+    data class ShowError(val message: String) : UiEvent()
+    object ProjectSaved : UiEvent()
+}
+
 class AddProjectViewModel(
     private val todoDao: TodoDao
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AddProjectUiState())
     val uiState: StateFlow<AddProjectUiState> = _uiState.asStateFlow()
+
+
+    private val _uiEvents = MutableSharedFlow<UiEvent>()
+    val uiEvents = _uiEvents.asSharedFlow()
 
     private val _allTodos = MutableStateFlow<List<TodoItem>>(emptyList())
     val allTodos: StateFlow<List<TodoItem>> = _allTodos.asStateFlow()
@@ -81,7 +92,10 @@ class AddProjectViewModel(
 
         // Validation
         if (state.title.isBlank()) {
-            _uiState.update { it.copy(errorMessage = "Title cannot be empty") }
+            viewModelScope.launch {
+                _uiEvents.emit(UiEvent.ShowError("Title cannot be empty"))
+                return@launch
+            }
             return
         }
 

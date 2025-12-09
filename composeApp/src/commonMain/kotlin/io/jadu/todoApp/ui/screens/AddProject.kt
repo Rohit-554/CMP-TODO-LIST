@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -31,12 +30,14 @@ import io.jadu.todoApp.ui.components.SelectGroupBottomSheet
 import io.jadu.todoApp.ui.components.SelectionCard
 import io.jadu.todoApp.ui.components.SelectionCardConfig
 import io.jadu.todoApp.ui.components.TodoTopAppBar
+import io.jadu.todoApp.ui.screens.homescreen.components.showSnackBar
 import io.jadu.todoApp.ui.screens.onBoarding.TodoBackgroundScreen
 import io.jadu.todoApp.ui.theme.BodyXLarge
 import io.jadu.todoApp.ui.theme.Spacing
 import io.jadu.todoApp.ui.theme.TodoColors
 import io.jadu.todoApp.ui.uiutils.VSpacer
 import io.jadu.todoApp.ui.viewModel.AddProjectViewModel
+import io.jadu.todoApp.ui.viewModel.UiEvent
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -61,6 +62,20 @@ fun AddProject(
         if (uiState.isSaved) {
             viewModel.resetState()
             navController.navigateUp()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.uiEvents.collect { event ->
+            when (event) {
+                is UiEvent.ShowError -> {
+                    showSnackBar(
+                        message = event.message,
+                        positiveMessage = false
+                    )
+                }
+                else -> {}
+            }
         }
     }
 
@@ -184,11 +199,6 @@ fun AddProject(
 
                 // Show error message if any
                 if (uiState.errorMessage != null) {
-                    Text(
-                        text = uiState.errorMessage!!,
-                        color = TodoColors.Error.color,
-                        modifier = Modifier.padding(bottom = Spacing.s2)
-                    )
                 }
 
                 CurvedButton(

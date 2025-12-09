@@ -2,7 +2,6 @@ package io.jadu.todoApp.ui.components
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -30,12 +29,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.jadu.todoApp.ui.screens.homescreen.components.showSnackBar
 import io.jadu.todoApp.ui.theme.BodyLarge
 import io.jadu.todoApp.ui.theme.BodyNormal
 import io.jadu.todoApp.ui.theme.Spacing
-import io.jadu.todoApp.ui.theme.TodoColors
 
 @Composable
 fun TodoTextField(
@@ -147,11 +145,8 @@ fun TodoTextField(
     )
 
     if (isError && !errorMessage.isNullOrEmpty()) {
-        Text(
-            text = errorMessage,
-            color = errorColor,
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+        showSnackBar(
+            message = errorMessage
         )
     }
 }
