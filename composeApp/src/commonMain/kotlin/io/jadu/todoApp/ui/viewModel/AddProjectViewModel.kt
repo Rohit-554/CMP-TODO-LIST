@@ -8,11 +8,11 @@ import io.jadu.todoApp.data.model.TaskGroupCategory
 import io.jadu.todoApp.data.model.TaskPriority
 import io.jadu.todoApp.data.model.TaskStatus
 import io.jadu.todoApp.data.model.TodoItem
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Clock
@@ -26,13 +26,11 @@ data class AddProjectUiState(
     val endDate: String? = null,
     val priority: TaskPriority = TaskPriority.MEDIUM,
     val isLoading: Boolean = false,
-    val errorMessage: String? = null,
-    val isSaved: Boolean = false
 )
 
 sealed class UiEvent {
     data class ShowError(val message: String) : UiEvent()
-    object ProjectSaved : UiEvent()
+    data class OnSuccess(val message: String) : UiEvent()
 }
 
 class AddProjectViewModel(
@@ -43,18 +41,12 @@ class AddProjectViewModel(
     val uiState: StateFlow<AddProjectUiState> = _uiState.asStateFlow()
 
 
-    private val _uiEvents = MutableSharedFlow<UiEvent>()
-    val uiEvents = _uiEvents.asSharedFlow()
-
-    private val _allTodos = MutableStateFlow<List<TodoItem>>(emptyList())
-    val allTodos: StateFlow<List<TodoItem>> = _allTodos.asStateFlow()
-
-    init {
-        loadAllTodos()
-    }
+    private val _uiEvents = Channel<UiEvent>()
+    // Expose as a Flow
+    val uiEvents = _uiEvents.receiveAsFlow()
 
     fun updateTitle(title: String) {
-        _uiState.update { it.copy(title = title, errorMessage = null) }
+        _uiState.update { it.copy(title = title) }
     }
 
     fun updateDescription(description: String) {
@@ -73,10 +65,6 @@ class AddProjectViewModel(
         _uiState.update { it.copy(endDate = date) }
     }
 
-    fun updatePriority(priority: TaskPriority) {
-        _uiState.update { it.copy(priority = priority) }
-    }
-
     private fun mapGroupCategoryToTaskCategory(groupCategory: TaskGroupCategory): TaskCategory {
         return when (groupCategory) {
             TaskGroupCategory.OfficeProject -> TaskCategory.Office
@@ -90,16 +78,25 @@ class AddProjectViewModel(
     fun saveProject() {
         val state = _uiState.value
 
-        // Validation
-        if (state.title.isBlank()) {
-            viewModelScope.launch {
-                _uiEvents.emit(UiEvent.ShowError("Title cannot be empty"))
-                return@launch
+        //validate State
+        when {
+            state.title.isBlank() -> {
+                viewModelScope.launch {
+                    _uiEvents.send(UiEvent.ShowError("Title cannot be empty"))
+                    return@launch
+                }
+                return
             }
-            return
+            state.startDate.isNullOrEmpty() -> {
+                viewModelScope.launch {
+                    _uiEvents.send(UiEvent.ShowError("Start Date cannot be empty"))
+                    return@launch
+                }
+                return
+            }
         }
 
-        _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+        _uiState.update { it.copy(isLoading = true) }
 
         viewModelScope.launch {
             try {
@@ -116,77 +113,16 @@ class AddProjectViewModel(
                 )
 
                 todoDao.insert(todoItem)
-                _uiState.update { it.copy(isLoading = false, isSaved = true) }
-                loadAllTodos() // Refresh the list
+                _uiState.update { it.copy(isLoading = false) }
+                _uiEvents.send(UiEvent.OnSuccess("Project saved Successfully"))
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = "Failed to save project: ${e.message}"
                     )
                 }
-            }
-        }
-    }
-
-    @OptIn(ExperimentalTime::class)
-    fun updateProject(id: Long) {
-        val state = _uiState.value
-
-        if (state.title.isBlank()) {
-            _uiState.update { it.copy(errorMessage = "Title cannot be empty") }
-            return
-        }
-
-        _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-
-        viewModelScope.launch {
-            try {
-                val existingTodo = todoDao.getById(id)
-                if (existingTodo != null) {
-                    val updatedTodo = existingTodo.copy(
-                        title = state.title,
-                        description = state.description,
-                        category = mapGroupCategoryToTaskCategory(state.selectedGroupCategory),
-                        groupCategory = state.selectedGroupCategory,
-                        scheduledDate = state.startDate,
-                        priority = state.priority,
-                        updatedAt = Clock.System.now()
-                    )
-                    todoDao.update(updatedTodo)
-                    _uiState.update { it.copy(isLoading = false, isSaved = true) }
-                    loadAllTodos()
-                } else {
-                    _uiState.update { it.copy(isLoading = false, errorMessage = "Todo not found") }
-                }
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = "Failed to update project: ${e.message}"
-                    )
-                }
-            }
-        }
-    }
-
-    fun deleteProject(id: Long) {
-        viewModelScope.launch {
-            try {
-                todoDao.deleteById(id)
-                loadAllTodos()
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(errorMessage = "Failed to delete project: ${e.message}")
-                }
-            }
-        }
-    }
-
-    fun loadAllTodos() {
-        viewModelScope.launch {
-            todoDao.getAllAsFlow().collect { todos ->
-                _allTodos.value = todos
+                _uiEvents.send(UiEvent.ShowError("Failed to save project: ${e.message}"))
+                return@launch
             }
         }
     }

@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,14 +59,6 @@ fun AddProject(
     var openEndDatePicker by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
-    // Navigate back when saved successfully
-    LaunchedEffect(uiState.isSaved) {
-        if (uiState.isSaved) {
-            viewModel.resetState()
-            navController.navigateUp()
-        }
-    }
-
     LaunchedEffect(Unit) {
         viewModel.uiEvents.collect { event ->
             when (event) {
@@ -74,7 +68,14 @@ fun AddProject(
                         positiveMessage = false
                     )
                 }
-                else -> {}
+                is UiEvent.OnSuccess -> {
+                    showSnackBar(
+                        message = event.message,
+                        positiveMessage = true
+                    )
+                    viewModel.resetState()
+                    navController.navigateUp()
+                }
             }
         }
     }
@@ -83,7 +84,7 @@ fun AddProject(
 
         // Don't give here, padding as topAppBar already have
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -196,10 +197,6 @@ fun AddProject(
 
                 // Take all the available Space below
                 VSpacer(Spacing.s12)
-
-                // Show error message if any
-                if (uiState.errorMessage != null) {
-                }
 
                 CurvedButton(
                     modifier = Modifier,
