@@ -1,10 +1,10 @@
-package io.jadu.todoApp.ui.screens.onBoarding
+package io.jadu.todoApp.ui.screens.navigations
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import io.jadu.todoApp.ui.navigation.NavRoute
+import io.jadu.todoApp.ui.route.NavRoute
 
 /**
  * Onboarding Navigation Graph

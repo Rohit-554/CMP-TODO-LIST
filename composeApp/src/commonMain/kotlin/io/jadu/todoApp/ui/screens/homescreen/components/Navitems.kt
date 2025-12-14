@@ -2,7 +2,7 @@ package io.jadu.todoApp.ui.screens.homescreen.components
 
 import io.jadu.todoApp.ui.animatedBottomBar.models.IconSource
 import io.jadu.todoApp.ui.animatedBottomBar.models.NavItem
-import io.jadu.todoApp.ui.navigation.NavRoute
+import io.jadu.todoApp.ui.route.NavRoute
 import todo_list.composeapp.generated.resources.Res
 import todo_list.composeapp.generated.resources.add
 import todo_list.composeapp.generated.resources.briefcase

@@ -62,8 +62,8 @@ import io.jadu.todoApp.ui.components.TodoElevatedCard
 import io.jadu.todoApp.ui.components.TodoTextField
 import io.jadu.todoApp.ui.components.TodoTopAppBar
 import io.jadu.todoApp.ui.components.bounceClickable
-import io.jadu.todoApp.ui.navigation.NavRoute
-import io.jadu.todoApp.ui.screens.onBoarding.TodoBackgroundScreen
+import io.jadu.todoApp.ui.route.NavRoute
+import io.jadu.todoApp.ui.screens.homescreen.components.showSnackBar
 import io.jadu.todoApp.ui.theme.BodyLarge
 import io.jadu.todoApp.ui.theme.BodyNormal
 import io.jadu.todoApp.ui.theme.BodySmall
@@ -73,6 +73,7 @@ import io.jadu.todoApp.ui.theme.H2TextStyle
 import io.jadu.todoApp.ui.theme.Spacing
 import io.jadu.todoApp.ui.theme.TodoColors
 import io.jadu.todoApp.ui.uiutils.VSpacer
+import io.jadu.todoApp.ui.utils.UiEvent
 import io.jadu.todoApp.ui.viewModel.SettingsViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -103,6 +104,15 @@ fun SettingsPage(
     LaunchedEffect(uiState.userProfile.name) {
         if (name.isEmpty() && uiState.userProfile.name.isNotEmpty()) {
             name = uiState.userProfile.name
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.uiEvents.collect { event ->
+            when(event) {
+                is UiEvent.OnSuccess -> showSnackBar(event.message)
+                is UiEvent.ShowError -> showSnackBar(event.message, positiveMessage = false)
+            }
         }
     }
 
@@ -152,7 +162,6 @@ fun SettingsPage(
                     }
             ) {
                 val screenHeight = maxHeight
-                val screenWidth = maxWidth
                 val cardHeight = screenHeight * 0.15f
 
                 Column(

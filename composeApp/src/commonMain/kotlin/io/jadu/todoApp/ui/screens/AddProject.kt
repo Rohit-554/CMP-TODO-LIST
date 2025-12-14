@@ -33,13 +33,12 @@ import io.jadu.todoApp.ui.components.SelectionCard
 import io.jadu.todoApp.ui.components.SelectionCardConfig
 import io.jadu.todoApp.ui.components.TodoTopAppBar
 import io.jadu.todoApp.ui.screens.homescreen.components.showSnackBar
-import io.jadu.todoApp.ui.screens.onBoarding.TodoBackgroundScreen
 import io.jadu.todoApp.ui.theme.BodyXLarge
 import io.jadu.todoApp.ui.theme.Spacing
 import io.jadu.todoApp.ui.theme.TodoColors
 import io.jadu.todoApp.ui.uiutils.VSpacer
+import io.jadu.todoApp.ui.utils.UiEvent
 import io.jadu.todoApp.ui.viewModel.AddProjectViewModel
-import io.jadu.todoApp.ui.viewModel.UiEvent
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview

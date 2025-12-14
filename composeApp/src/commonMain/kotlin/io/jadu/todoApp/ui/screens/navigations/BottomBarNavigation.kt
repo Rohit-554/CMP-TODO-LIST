@@ -1,10 +1,10 @@
-package io.jadu.todoApp.ui.screens
+package io.jadu.todoApp.ui.screens.navigations
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Surface  //import material 3 not material
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -16,12 +16,15 @@ import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import io.jadu.todoApp.ui.animatedBottomBar.CurvedBottomNavigation
 import io.jadu.todoApp.ui.animatedBottomBar.models.CurveAnimationType
 import io.jadu.todoApp.ui.animatedBottomBar.models.IconSource
 import io.jadu.todoApp.ui.animatedBottomBar.models.NavItem
-import io.jadu.todoApp.ui.navigation.NavRoute
+import io.jadu.todoApp.ui.route.NavRoute
+import io.jadu.todoApp.ui.screens.AddProject
+import io.jadu.todoApp.ui.screens.SettingsPage
+import io.jadu.todoApp.ui.screens.TaskScreen
+import io.jadu.todoApp.ui.screens.TestScreen
 import io.jadu.todoApp.ui.screens.homescreen.HomeScreen
 import io.jadu.todoApp.ui.screens.homescreen.MostUsedCategoryScreen
 import io.jadu.todoApp.ui.screens.homescreen.components.CustomSnackbarHost
@@ -34,7 +37,7 @@ import todo_list.composeapp.generated.resources.home
 import todo_list.composeapp.generated.resources.user_octagon
 
 @Composable
-fun MainNavigation(
+fun BottomBarNavigation(
     navController : NavHostController
 ) {
     val bottomNavItems = remember {
@@ -77,11 +80,6 @@ fun MainNavigation(
         currentRoute?.contains(item.route::class.simpleName ?: "") == true
     }.coerceAtLeast(0)
 
-    // Check if we should show bottom bar
-    val shouldShowBottomBar = remember(currentRoute) {
-        currentRoute?.contains("AboutUs") != true && currentRoute?.contains("EditTodo") != true
-    }
-
     Surface(
         modifier = Modifier.navigationBarsPadding(),
     ) {
@@ -118,58 +116,43 @@ fun MainNavigation(
                     SettingsPage(navController)
                 }
 
-                composable<NavRoute.AboutUs> {
-                    AboutUsPage(navController)
-                }
-
-                composable<NavRoute.EditTodo> { backStackEntry ->
-                    val editTodoRoute = backStackEntry.toRoute<NavRoute.EditTodo>()
-                    EditTodoScreen(
-                        navController = navController,
-                        todoId = editTodoRoute.todoId
-                    )
-                }
-
                 composable<NavRoute.TestScreen> {
                     TestScreen()
                 }
             }
 
-            if (shouldShowBottomBar) {
-                CurvedBottomNavigation(
-                    modifier = Modifier.align(Alignment.BottomCenter),
-                    items = bottomNavItems,
-                    selectedIndex = selectedIndex,
-                    onItemSelected = { index ->
-                        val selectedRoute = bottomNavItems[index].route
+            CurvedBottomNavigation(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                items = bottomNavItems,
+                selectedIndex = selectedIndex,
+                onItemSelected = { index ->
+                    val selectedRoute = bottomNavItems[index].route
 
-                        if(index == 0) {
-                            navController.navigate(NavRoute.Home) {
-                                popUpTo(0) {
-                                    inclusive = true
-                                }
-                                launchSingleTop = true
+                    if (index == 0) {
+                        navController.navigate(NavRoute.Home) {
+                            popUpTo(0) {
+                                inclusive = true
                             }
-                            return@CurvedBottomNavigation
+                            launchSingleTop = true
                         }
+                        return@CurvedBottomNavigation
+                    }
 
-                        if(index !=selectedIndex) {
-                            navController.navigate(selectedRoute){
-                                launchSingleTop = true
-                                restoreState = true
-                            }
+                    if (index != selectedIndex) {
+                        navController.navigate(selectedRoute) {
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                    },
-                    curveAnimationType = CurveAnimationType.SMOOTH,
-                    enableHapticFeedback = true,
-                    showLabels = true,
-                    navBarBackgroundColor = TodoColors.LightPrimary.color,
-                    fabBackgroundColor = TodoColors.Primary.color,
-                    unselectedIconTint = TodoColors.Primary.color,
-                )
-            }
+                    }
+                },
+                curveAnimationType = CurveAnimationType.SMOOTH,
+                enableHapticFeedback = true,
+                showLabels = true,
+                navBarBackgroundColor = TodoColors.LightPrimary.color,
+                fabBackgroundColor = TodoColors.Primary.color,
+                unselectedIconTint = TodoColors.Primary.color,
+            )
         }
-
     }
 }
 

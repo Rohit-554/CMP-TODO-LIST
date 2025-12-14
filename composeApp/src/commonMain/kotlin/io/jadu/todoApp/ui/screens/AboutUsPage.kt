@@ -17,7 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
 import io.jadu.todoApp.ui.components.TodoTopAppBar
-import io.jadu.todoApp.ui.screens.onBoarding.TodoBackgroundScreen
 import io.jadu.todoApp.ui.theme.BodyLarge
 import io.jadu.todoApp.ui.theme.BodyNormal
 import io.jadu.todoApp.ui.theme.H2TextStyle

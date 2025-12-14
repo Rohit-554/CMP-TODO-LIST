@@ -5,7 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.ViewModel
-import io.jadu.todoApp.ui.navigation.NavRoute
+import io.jadu.todoApp.ui.route.NavRoute
 import kotlinx.coroutines.flow.first
 
 class OnBoardingViewModel(

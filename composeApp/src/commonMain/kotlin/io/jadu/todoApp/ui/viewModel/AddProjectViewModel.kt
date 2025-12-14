@@ -8,6 +8,7 @@ import io.jadu.todoApp.data.model.TaskGroupCategory
 import io.jadu.todoApp.data.model.TaskPriority
 import io.jadu.todoApp.data.model.TaskStatus
 import io.jadu.todoApp.data.model.TodoItem
+import io.jadu.todoApp.ui.utils.UiEvent
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,12 +28,6 @@ data class AddProjectUiState(
     val priority: TaskPriority = TaskPriority.MEDIUM,
     val isLoading: Boolean = false,
 )
-
-sealed class UiEvent {
-    data class ShowError(val message: String) : UiEvent()
-    data class OnSuccess(val message: String) : UiEvent()
-}
-
 class AddProjectViewModel(
     private val todoDao: TodoDao
 ) : ViewModel() {

@@ -5,10 +5,13 @@ import androidx.lifecycle.viewModelScope
 import io.jadu.todoApp.data.local.TodoDao
 import io.jadu.todoApp.data.local.UserProfileDao
 import io.jadu.todoApp.data.model.UserProfile
+import io.jadu.todoApp.ui.utils.UiEvent
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -17,8 +20,7 @@ data class SettingsUiState(
     val totalTodos: Int = 0,
     val completedTodos: Int = 0,
     val incompleteTodos: Int = 0,
-    val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val isLoading: Boolean = false
 )
 
 class SettingsViewModel(
@@ -27,7 +29,10 @@ class SettingsViewModel(
 ) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
-    private val _errorMessage = MutableStateFlow<String?>(null)
+
+    /* This is used for the success and failure events */
+    private val _uiEvents = Channel<UiEvent>()
+    val uiEvents = _uiEvents.receiveAsFlow()
 
     val uiState: StateFlow<SettingsUiState> = combine(
         userProfileDao.getUserProfile(),
@@ -35,14 +40,12 @@ class SettingsViewModel(
         todoDao.getCompletedCount(),
         todoDao.getIncompleteCount(),
         _isLoading,
-        _errorMessage
     ) { flows ->
         val userProfile = flows[0] as? UserProfile
         val totalTodos = flows[1] as? Int ?: 0
         val completedTodos = flows[2] as? Int ?: 0
         val incompleteTodos = flows[3] as? Int ?: 0
         val isLoading = flows[4] as? Boolean ?: false
-        val errorMessage = flows[5] as? String?
 
         SettingsUiState(
             userProfile = userProfile ?: UserProfile(),
@@ -50,7 +53,6 @@ class SettingsViewModel(
             completedTodos = completedTodos,
             incompleteTodos = incompleteTodos,
             isLoading = isLoading,
-            errorMessage = errorMessage
         )
     }.stateIn(
         scope = viewModelScope,
@@ -62,7 +64,6 @@ class SettingsViewModel(
         viewModelScope.launch {
             try {
                 _isLoading.value = true
-                _errorMessage.value = null
 
                 val profile = UserProfile(
                     id = 1,
@@ -70,10 +71,9 @@ class SettingsViewModel(
                     photoData = photoData
                 )
                 userProfileDao.insert(profile)
-
                 _isLoading.value = false
             } catch (e: Exception) {
-                _errorMessage.value = "Failed to save profile: ${e.message}"
+                _uiEvents.send(UiEvent.ShowError("Failed to save profile: ${e.message}"))
                 _isLoading.value = false
             }
         }
@@ -86,7 +86,7 @@ class SettingsViewModel(
                 val updatedProfile = currentProfile.copy(name = name)
                 userProfileDao.insert(updatedProfile)
             } catch (e: Exception) {
-                _errorMessage.value = "Failed to update name: ${e.message}"
+                _uiEvents.send(UiEvent.ShowError("Failed to update name: ${e.message}"))
             }
         }
     }
@@ -98,7 +98,7 @@ class SettingsViewModel(
                 val updatedProfile = currentProfile.copy(photoData = photoData)
                 userProfileDao.insert(updatedProfile)
             } catch (e: Exception) {
-                _errorMessage.value = "Failed to update photo: ${e.message}"
+                _uiEvents.send(UiEvent.ShowError("Failed to update photo: ${e.message}"))
             }
         }
     }

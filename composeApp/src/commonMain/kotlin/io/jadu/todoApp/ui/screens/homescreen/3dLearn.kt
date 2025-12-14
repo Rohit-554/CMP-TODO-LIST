@@ -18,8 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import io.jadu.todoApp.ui.components.SphereTextDemo
 import io.jadu.todoApp.ui.components.TodoTopAppBar
-import io.jadu.todoApp.ui.screens.onBoarding.ColoredDot
-import io.jadu.todoApp.ui.screens.onBoarding.TodoBackgroundScreen
 import io.jadu.todoApp.ui.theme.Spacing
 import io.jadu.todoApp.ui.theme.TodoColors
 import io.jadu.todoApp.ui.viewModel.MostUsedCategoryViewModel

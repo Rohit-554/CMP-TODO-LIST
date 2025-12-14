@@ -1,4 +1,4 @@
-package io.jadu.todoApp.ui.screens.onBoarding
+package io.jadu.todoApp.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

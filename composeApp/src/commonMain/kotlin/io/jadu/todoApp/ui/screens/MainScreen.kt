@@ -14,9 +14,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import io.jadu.todoApp.ui.navigation.NavRoute
-import io.jadu.todoApp.ui.navigation.RootNavGraph
-import io.jadu.todoApp.ui.screens.onBoarding.RootNavigation
+import io.jadu.todoApp.ui.route.NavRoute
+import io.jadu.todoApp.ui.route.RootNavGraph
+import io.jadu.todoApp.ui.screens.navigations.RootNavigation
 import io.jadu.todoApp.ui.theme.TodoColors
 import io.jadu.todoApp.ui.viewModel.OnBoardingViewModel
 import kotlinx.coroutines.launch
@@ -30,15 +30,24 @@ fun MainScreen(
     val scope = rememberCoroutineScope()
 
     var isLoading by remember { mutableStateOf(true) }
-    var startDestination by remember { mutableStateOf(RootNavGraph.Main.route) }
+    var startDestination by remember { mutableStateOf<RootNavGraph>(RootNavGraph.Onboarding) }
 
     LaunchedEffect(Unit) {
         scope.launch {
             val currentRoute = onBoardingViewModel.getCurrentRoute()
-            startDestination = if (currentRoute == NavRoute.Onboarding) {
-                RootNavGraph.Onboarding.route
-            } else {
-                RootNavGraph.Main.route
+            startDestination = when(currentRoute) {
+                NavRoute.Onboarding -> {
+                    RootNavGraph.Onboarding
+                }
+
+                NavRoute.AboutUs -> {
+                    RootNavGraph.MainScreenNav
+                }
+
+                else -> {
+                    RootNavGraph.BottomNavBar
+                }
+
             }
             isLoading = false
         }

@@ -7,9 +7,12 @@ import io.jadu.todoApp.data.model.TaskCategory
 import io.jadu.todoApp.data.model.TaskGroupCategory
 import io.jadu.todoApp.data.model.TaskPriority
 import io.jadu.todoApp.data.model.TaskStatus
+import io.jadu.todoApp.ui.utils.UiEvent
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Clock
@@ -25,7 +28,6 @@ data class EditTodoUiState(
     val endDate: String? = null,
     val priority: TaskPriority = TaskPriority.MEDIUM,
     val isLoading: Boolean = false,
-    val errorMessage: String? = null,
     val isSaved: Boolean = false,
     val isDeleted: Boolean = false
 )
@@ -36,6 +38,10 @@ class EditTodoViewModel(
 
     private val _uiState = MutableStateFlow(EditTodoUiState())
     val uiState: StateFlow<EditTodoUiState> = _uiState.asStateFlow()
+
+    private val _uiEvents = Channel<UiEvent>()
+    // Expose as a Flow
+    val uiEvents = _uiEvents.receiveAsFlow()
 
     fun loadTodo(todoId: Long) {
         viewModelScope.launch {
@@ -55,16 +61,16 @@ class EditTodoViewModel(
                         )
                     }
                 } else {
-                    _uiState.update { it.copy(errorMessage = "Todo not found") }
+                    _uiEvents.send(UiEvent.ShowError("Todo not found"))
                 }
             } catch (e: Exception) {
-                _uiState.update { it.copy(errorMessage = "Failed to load todo: ${e.message}") }
+                _uiEvents.send(UiEvent.OnSuccess("Failed to load todo: ${e.message}"))
             }
         }
     }
 
     fun updateTitle(title: String) {
-        _uiState.update { it.copy(title = title, errorMessage = null) }
+        _uiState.update { it.copy(title = title) }
     }
 
     fun updateDescription(description: String) {
@@ -105,11 +111,13 @@ class EditTodoViewModel(
         val state = _uiState.value
 
         if (state.title.isBlank()) {
-            _uiState.update { it.copy(errorMessage = "Title cannot be empty") }
+            viewModelScope.launch {
+                _uiEvents.send(UiEvent.OnSuccess("Title cannot be empty"))
+            }
             return
         }
 
-        _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+        _uiState.update { it.copy(isLoading = true) }
 
         viewModelScope.launch {
             try {
@@ -130,31 +138,28 @@ class EditTodoViewModel(
                     todoDao.update(updatedTodo)
                     _uiState.update { it.copy(isLoading = false, isSaved = true) }
                 } else {
-                    _uiState.update { it.copy(isLoading = false, errorMessage = "Todo not found") }
+                    _uiEvents.send(UiEvent.ShowError("Todo Not found!"))
+                    _uiState.update { it.copy(isLoading = false) }
                 }
             } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = "Failed to update todo: ${e.message}"
-                    )
-                }
+                _uiEvents.send(UiEvent.ShowError("Failed to update todo:  ${e.message}"))
             }
         }
     }
 
     fun deleteTodo() {
-        _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+        _uiState.update { it.copy(isLoading = true) }
 
         viewModelScope.launch {
             try {
                 todoDao.deleteById(_uiState.value.todoId)
                 _uiState.update { it.copy(isLoading = false, isDeleted = true) }
             } catch (e: Exception) {
+                _uiEvents.send(UiEvent.ShowError("Failed to delete todo: ${e.message}"))
+
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = "Failed to delete todo: ${e.message}"
                     )
                 }
             }

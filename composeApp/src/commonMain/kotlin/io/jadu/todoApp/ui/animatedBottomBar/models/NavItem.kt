@@ -1,7 +1,7 @@
 package io.jadu.todoApp.ui.animatedBottomBar.models
 
 import androidx.compose.ui.graphics.vector.ImageVector
-import io.jadu.todoApp.ui.navigation.NavRoute
+import io.jadu.todoApp.ui.route.NavRoute
 import org.jetbrains.compose.resources.DrawableResource
 
 

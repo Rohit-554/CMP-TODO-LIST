@@ -31,7 +31,7 @@ import io.jadu.todoApp.ui.components.CurvedButton
 import io.jadu.todoApp.ui.components.CurvedButtonConfig
 import io.jadu.todoApp.ui.components.ScheduleTaskCard
 import io.jadu.todoApp.ui.components.TodoTopAppBar
-import io.jadu.todoApp.ui.screens.onBoarding.TodoBackgroundScreen
+import io.jadu.todoApp.ui.route.NavRoute
 import io.jadu.todoApp.ui.theme.BodyLarge
 import io.jadu.todoApp.ui.theme.Spacing
 import io.jadu.todoApp.ui.theme.TodoColors
@@ -137,7 +137,7 @@ fun TaskScreen(
                         ScheduleTaskCard(
                             task = todo.toScheduleTaskModel(),
                             onClick = {
-                                navController.navigate(io.jadu.todoApp.ui.navigation.NavRoute.EditTodo(todoId = todo.id))
+                                navController.navigate(NavRoute.EditTodo(todoId = todo.id))
                             }
                         )
                     }

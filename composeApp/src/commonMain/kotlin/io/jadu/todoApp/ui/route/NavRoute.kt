@@ -1,4 +1,4 @@
-package io.jadu.todoApp.ui.navigation
+package io.jadu.todoApp.ui.route
 
 import kotlinx.serialization.Serializable
 
@@ -40,10 +40,13 @@ sealed class NavRoute {
  * Root level navigation graph routes
  */
 @Serializable
-sealed class RootNavGraph(val route: String) {
+sealed class RootNavGraph {
     @Serializable
-    data object Onboarding : RootNavGraph("onboarding_graph")
+    data object Onboarding : RootNavGraph()
 
     @Serializable
-    data object Main : RootNavGraph("main_graph")
+    data object BottomNavBar : RootNavGraph()
+
+    @Serializable
+    data object MainScreenNav : RootNavGraph()
 }
