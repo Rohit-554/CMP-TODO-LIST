@@ -2,6 +2,13 @@
 
 This is a Todo List application built using Kotlin Multiplatform and Compose Multiplatform. It allows you to manage your tasks and projects efficiently on both Android and iOS devices using a single codebase.
 
+## Demo
+
+[Screen_recording_20251213_010429.webm](https://github.com/user-attachments/assets/245ef69a-1d8f-4c10-806f-a6580a787dc2)
+
+
+
+
 ## Why I created this project
 
 I started this project to learn and demonstrate the power of Kotlin Multiplatform and Compose Multiplatform. My goal was to build a functional app that looks and feels great on both mobile platforms without writing separate code for each. It serves as a playground for experimenting with shared UI, animations, and state management in a modern cross-platform environment.
