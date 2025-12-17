@@ -1,35 +1,65 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# Todo List App
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+This is a Todo List application built using Kotlin Multiplatform and Compose Multiplatform. It allows you to manage your tasks and projects efficiently on both Android and iOS devices using a single codebase.
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+## Why I created this project
 
-### Build and Run Android Application
+I started this project to learn and demonstrate the power of Kotlin Multiplatform and Compose Multiplatform. My goal was to build a functional app that looks and feels great on both mobile platforms without writing separate code for each. It serves as a playground for experimenting with shared UI, animations, and state management in a modern cross-platform environment.
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+## Features
 
-### Build and Run iOS Application
+- **Cross-Platform:** Runs smoothly on both Android and iOS.
+- **Task Management:** Create, edit, and organize your daily tasks.
+- **Projects:** Group your tasks into projects with specific goals.
+- **Priorities:** Set priorities for your tasks to focus on what matters most.
+- **Categories:** Organize tasks by categories like Daily Study or Work.
+- **Dates:** Set start and end dates for your projects to keep track of deadlines.
+- **Custom Animations:** Includes a custom animated bottom navigation bar for a better user experience.
+- **Onboarding:** A welcoming onboarding screen to get you started.
+- **Settings:** Customize your app experience.
 
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+## How to install
+
+To run this project on your local machine, you will need Android Studio and Xcode (for iOS).
+
+1. **Clone the repository**
+   Download the code to your computer using git clone.
+
+2. **Open in Android Studio**
+   Open the project folder in Android Studio. Wait for Gradle to sync and download all the necessary libraries.
+
+3. **Run on Android**
+   Select the android configuration in the run menu and click the run button. You can use an Android emulator or a physical device.
+
+4. **Run on iOS**
+   You can run the iOS app directly from Android Studio if you have the KMM plugin installed. Alternatively, open the `iosApp` folder in Xcode and run it on an iOS Simulator or a connected iPhone.
+
+## Contributions
+
+I welcome contributions from everyone. If you have an idea for a new feature or found a bug, feel free to open an issue. If you want to contribute code:
+
+1. Fork this repository.
+2. Create a new branch for your changes.
+3. Make your changes and commit them.
+4. Push your branch and open a Pull Request.
+
+## Upcoming features
+
+I am planning to add more features in the future:
+
+- Cloud synchronization to save your tasks online.
+- Push notifications to remind you of upcoming deadlines.
+- Dark mode support for better viewing at night.
+- More theme customization options.
+- improved performance on lower-end devices.
+
+## Technologies Used
+
+- Kotlin Multiplatform
+- Compose Multiplatform
+- Koin (for Dependency Injection)
+- Kotlin Coroutines
 
 ---
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+Made with ❤️ by Jadu
