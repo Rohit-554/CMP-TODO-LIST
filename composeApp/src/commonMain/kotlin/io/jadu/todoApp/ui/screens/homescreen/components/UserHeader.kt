@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import coil3.compose.AsyncImage
 import io.jadu.todoApp.data.model.UserProfile
+import io.jadu.todoApp.ui.components.bounceClickable
 import io.jadu.todoApp.ui.theme.BodyLarge
 import io.jadu.todoApp.ui.theme.BodySmall
 import io.jadu.todoApp.ui.theme.BodyXXLarge
@@ -36,7 +37,8 @@ import todo_list.composeapp.generated.resources.user_octagon
 @Composable
 @Preview(showBackground = true)
 fun UserHeader(
-    userProfile: UserProfile = UserProfile()
+    userProfile: UserProfile = UserProfile(),
+    onNotificationClick: () -> Unit
 ) {
 
     val shouldShowNotificationDot = remember { mutableStateOf(true) }
@@ -103,7 +105,9 @@ fun UserHeader(
         }
 
         Box(
-            modifier = Modifier.size(Spacing.s6)
+            modifier = Modifier
+                .size(Spacing.s6)
+                .bounceClickable(onClick = onNotificationClick)
         ) {
             Image(
                 painter = painterResource(Res.drawable.notification),

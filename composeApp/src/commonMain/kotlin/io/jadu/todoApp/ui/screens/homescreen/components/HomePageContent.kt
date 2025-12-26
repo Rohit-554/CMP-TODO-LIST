@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import io.jadu.todoApp.ui.notification.NotificationViewModel
 import io.jadu.todoApp.ui.route.NavRoute
 import io.jadu.todoApp.ui.theme.BodyLarge
 import io.jadu.todoApp.ui.theme.Spacing
@@ -33,7 +34,8 @@ import org.koin.compose.koinInject
 @Composable
 fun HomePageContent(
     navController: NavController,
-    viewModel: HomeScreenViewModel = koinInject()
+    viewModel: HomeScreenViewModel = koinInject(),
+    notificationVM: NotificationViewModel = koinInject()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -46,7 +48,12 @@ fun HomePageContent(
         Column(
             modifier = Modifier.padding(Spacing.s4)
         ) {
-            UserHeader(userProfile = uiState.userProfile)
+            UserHeader(
+                userProfile = uiState.userProfile,
+                onNotificationClick = {
+                    notificationVM.onEnableNotificationsClicked()
+                }
+            )
             VSpacer(Spacing.s6)
             TaskProgressCard(
                 progress = uiState.todayProgress,
