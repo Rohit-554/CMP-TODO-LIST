@@ -4,7 +4,7 @@
     <!-- ONBOARDING SCREEN-->
     <string name="onboarding_title">Task Management \u0026<br/>To-Do List</string>
     <string name="onboarding_text">This productive tool is designed to help<br/>you better manage your task<br/>project-wisely conveniently!</string>
-    <string name="onboarding_button">Let\'s Start</string>
+    <string name="onboarding_button">Let's Start</string>
 
     <!-- HOMESCREEN -->
     <string name="task_card">Your Today's task <br/> almost done</string>
