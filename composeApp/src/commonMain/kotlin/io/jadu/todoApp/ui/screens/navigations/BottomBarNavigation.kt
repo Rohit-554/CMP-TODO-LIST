@@ -62,7 +62,12 @@ fun BottomBarNavigation() {
     }
 
     val entryProvider = entryProvider<NavKey> {
-        entry<NavRoute.Home> { HomeScreen(onNavigateToTaskScreen = { navigator.navigate(NavRoute.TaskScreen) }) }
+        entry<NavRoute.Home> {
+            HomeScreen(
+                onNavigateToTaskScreen = { navigator.navigate(NavRoute.TaskScreen) },
+                onNavigateToEditTask = { id -> navigator.navigate(NavRoute.EditTodo(id)) }
+            )
+        }
         entry<NavRoute.TaskScreen> {
             TaskScreen(onNavigateToEditTask = { id ->
                 navigator.navigate(

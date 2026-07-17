@@ -6,10 +6,16 @@ import io.jadu.todoApp.ui.screens.TodoBackgroundScreen
 import io.jadu.todoApp.ui.screens.homescreen.components.HomePageContent
 
 @Composable
-fun HomeScreen(onNavigateToTaskScreen: () -> Unit) {
+fun HomeScreen(
+    onNavigateToTaskScreen: () -> Unit,
+    onNavigateToEditTask: (Long) -> Unit
+) {
     Scaffold {
         TodoBackgroundScreen {
-            HomePageContent(onNavigateToTaskScreen)
+            HomePageContent(
+                onNavigateToTaskScreen = onNavigateToTaskScreen,
+                onNavigateToEditTask = onNavigateToEditTask
+            )
         }
     }
 }

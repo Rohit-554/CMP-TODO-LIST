@@ -95,6 +95,11 @@
 
 
 
+    <!-- SEARCH -->
+    <string name="search_hint">Search tasks…</string>
+    <string name="search_no_results">No tasks found for "%1$s"</string>
+    <string name="search_results">Results</string>
+
     <!-- MISC -->
     <string name="top_categ">Most Used Categories</string>
     <string name="user_hello">Hello!</string>

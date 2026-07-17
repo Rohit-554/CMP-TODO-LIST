@@ -47,4 +47,13 @@ interface TodoDao {
 
     @Query("SELECT DISTINCT groupCategory FROM TodoItem WHERE groupCategory IS NOT NULL")
     fun getUniqueGroupCategories(): Flow<List<String>>
+
+    @Query("""
+        SELECT * FROM TodoItem
+        WHERE title LIKE '%' || :query || '%'
+           OR description LIKE '%' || :query || '%'
+           OR tags LIKE '%' || :query || '%'
+        ORDER BY updatedAt DESC
+    """)
+    fun searchTodos(query: String): Flow<List<TodoItem>>
 }

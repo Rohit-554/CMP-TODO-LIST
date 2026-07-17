@@ -36,13 +36,16 @@ import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import todo_list.composeapp.generated.resources.Res
 import todo_list.composeapp.generated.resources.in_progress2
-import todo_list.composeapp.generated.resources.task_group
 import todo_list.composeapp.generated.resources.no_task_groups
+import todo_list.composeapp.generated.resources.search_no_results
+import todo_list.composeapp.generated.resources.search_results
+import todo_list.composeapp.generated.resources.task_group
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomePageContent(
     onNavigateToTaskScreen: () -> Unit,
+    onNavigateToEditTask: (Long) -> Unit,
     viewModel: HomeScreenViewModel = koinInject(),
     notificationVM: NotificationViewModel = koinInject()
 ) {
@@ -80,66 +83,109 @@ fun HomePageContent(
                     notificationVM.onEnableNotificationsClicked(activity)
                 }
             )
-            VSpacer(Spacing.s6)
-            TaskProgressCard(
-                progress = uiState.todayProgress,
-                onViewTaskClick = onNavigateToTaskScreen
+            VSpacer(Spacing.s4)
+            SearchBar(
+                query = uiState.searchQuery,
+                onQueryChange = viewModel::onSearchQueryChange,
+                onClear = viewModel::clearSearch
             )
-            if(uiState.inProgressTasks.isNotEmpty()) {
-                VSpacer(Spacing.s4)
-                SectionHeader(
-                    title = stringResource(Res.string.in_progress2),
-                    count = uiState.inProgressTasks.size
-                )
-            }
         }
 
-        AnimatedVisibility(
-            visible = uiState.inProgressTasks.isNotEmpty()
-        ) {
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                itemsIndexed(
-                    items = uiState.inProgressTasks,
-                    key = { _, task -> task.id }
-                ) { idx, task ->
-                    if (idx == 0) HSpacer(Spacing.s4)
-                    InProgressTaskCard(task)
-                    if (idx == uiState.inProgressTasks.lastIndex) {
-                        HSpacer(Spacing.s4)
+        // Search results view
+        AnimatedVisibility(visible = uiState.isSearchActive) {
+            Column(modifier = Modifier.padding(Spacing.s4)) {
+                SectionHeader(
+                    title = stringResource(Res.string.search_results),
+                    count = uiState.searchResults.size
+                )
+                if (uiState.searchResults.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = Spacing.s12),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.search_no_results, uiState.searchQuery),
+                            style = BodyLarge().copy(
+                                color = TodoColors.Secondary.color,
+                                textAlign = TextAlign.Center
+                            )
+                        )
+                    }
+                } else {
+                    uiState.searchResults.forEach { todo ->
+                        VSpacer(Spacing.s2)
+                        SearchResultItem(
+                            todo = todo,
+                            searchQuery = uiState.searchQuery,
+                            onClick = { onNavigateToEditTask(todo.id) }
+                        )
                     }
                 }
             }
         }
 
-        Column(
-            modifier = Modifier.padding(Spacing.s4)
-        ) {
-            SectionHeader(
-                title = stringResource(Res.string.task_group),
-                count = uiState.taskGroups.size
-            )
-
-            if (uiState.taskGroups.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = Spacing.s12),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(Res.string.no_task_groups),
-                        style = BodyLarge().copy(
-                            color = TodoColors.Secondary.color,
-                            textAlign = TextAlign.Center
-                        )
+        // Normal content (hidden during search)
+        AnimatedVisibility(visible = !uiState.isSearchActive) {
+            Column {
+                Column(modifier = Modifier.padding(Spacing.s4)) {
+                    TaskProgressCard(
+                        progress = uiState.todayProgress,
+                        onViewTaskClick = onNavigateToTaskScreen
                     )
+                    if (uiState.inProgressTasks.isNotEmpty()) {
+                        VSpacer(Spacing.s4)
+                        SectionHeader(
+                            title = stringResource(Res.string.in_progress2),
+                            count = uiState.inProgressTasks.size
+                        )
+                    }
                 }
-            } else {
-                uiState.taskGroups.forEach { taskGroup ->
-                    TaskGroupCard(taskGroup)
+
+                AnimatedVisibility(visible = uiState.inProgressTasks.isNotEmpty()) {
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        itemsIndexed(
+                            items = uiState.inProgressTasks,
+                            key = { _, task -> task.id }
+                        ) { idx, task ->
+                            if (idx == 0) HSpacer(Spacing.s4)
+                            InProgressTaskCard(task)
+                            if (idx == uiState.inProgressTasks.lastIndex) {
+                                HSpacer(Spacing.s4)
+                            }
+                        }
+                    }
+                }
+
+                Column(modifier = Modifier.padding(Spacing.s4)) {
+                    SectionHeader(
+                        title = stringResource(Res.string.task_group),
+                        count = uiState.taskGroups.size
+                    )
+                    if (uiState.taskGroups.isEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = Spacing.s12),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = stringResource(Res.string.no_task_groups),
+                                style = BodyLarge().copy(
+                                    color = TodoColors.Secondary.color,
+                                    textAlign = TextAlign.Center
+                                )
+                            )
+                        }
+                    } else {
+                        uiState.taskGroups.forEach { taskGroup ->
+                            TaskGroupCard(taskGroup)
+                        }
+                    }
                 }
             }
         }

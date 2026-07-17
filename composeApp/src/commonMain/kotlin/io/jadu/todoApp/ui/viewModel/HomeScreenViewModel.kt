@@ -31,7 +31,10 @@ data class HomeScreenUiState(
     val todayTasksCount: Int = 0,
     val userProfile: UserProfile = UserProfile(),
     val isLoading: Boolean = false,
-    val isRefreshing: Boolean = false
+    val isRefreshing: Boolean = false,
+    val searchQuery: String = "",
+    val searchResults: List<TodoItem> = emptyList(),
+    val isSearchActive: Boolean = false
 )
 
 class HomeScreenViewModel(
@@ -51,6 +54,36 @@ class HomeScreenViewModel(
             _uiState.update { it.copy(isRefreshing = true) }
             delay(600)
             _uiState.update { it.copy(isRefreshing = false) }
+        }
+    }
+
+    fun onSearchQueryChange(query: String) {
+        val trimmed = query.trim()
+        val results = if (trimmed.isBlank()) {
+            emptyList()
+        } else {
+            _uiState.value.allTodos.filter { todo ->
+                todo.title.contains(trimmed, ignoreCase = true) ||
+                todo.description.contains(trimmed, ignoreCase = true) ||
+                todo.tags.any { it.contains(trimmed, ignoreCase = true) }
+            }
+        }
+        _uiState.update {
+            it.copy(
+                searchQuery = query,
+                searchResults = results,
+                isSearchActive = trimmed.isNotBlank()
+            )
+        }
+    }
+
+    fun clearSearch() {
+        _uiState.update {
+            it.copy(
+                searchQuery = "",
+                searchResults = emptyList(),
+                isSearchActive = false
+            )
         }
     }
 
